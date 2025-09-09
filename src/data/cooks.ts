@@ -1,4 +1,4 @@
-export interface Coock {
+export interface Cook {
   id: string;
   name: string;
   cousine: string;
@@ -8,7 +8,7 @@ export interface Coock {
   avatar: string;
 }
 
-export const coocks: Coock[] = [
+export const cooks: Cook[] = [
   {
     id: "1",
     name: "Mario Rossi",
