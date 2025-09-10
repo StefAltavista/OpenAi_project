@@ -15,9 +15,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="w-full h-[100px] bg-red-500"> HEADER </div>
+        <div className="w-full  bg-red-100 flex justify-center items-center">
+          HEADER
+        </div>
         {children}
-        <div className="w-full h-[100px] bg-blue-500"> FOOTER </div>
+        <div className="w-full h-[100px] bg-red-100 flex justify-center items-center">
+          FOOTER
+        </div>
       </body>
     </html>
   );

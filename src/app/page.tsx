@@ -1,5 +1,10 @@
+import BasicChat from "@/components/BasicChat";
 import Image from "next/image";
 
 export default function Home() {
-  return <h1>Hello World</h1>;
+  return (
+    <div className="h-[80vh] w-full">
+      <BasicChat />
+    </div>
+  );
 }
