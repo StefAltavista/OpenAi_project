@@ -27,7 +27,6 @@ export default function BasicChat() {
     });
 
     const data = await res.json();
-    console.log("data", data);
     setResponse(data[data.length - 1]);
   };
 
@@ -38,7 +37,7 @@ export default function BasicChat() {
     });
 
     if (!response) return;
-    console.log("response", response);
+    console.log("history", history);
     setHistory([...history, response]);
     setResponse(null);
   }, [response, history]);
@@ -48,18 +47,20 @@ export default function BasicChat() {
         ref={chatRef}
         className="w-full flex flex-col h-[90%] overflow-y-auto hide-scrollbar"
       >
-        {history.map((x, idx) => (
-          <div
-            key={idx}
-            className={`p-2 m-2 rounded w-[80%] ${
-              x.role == "user"
-                ? "!bg-red-100 text-right ml-auto "
-                : " !bg-blue-100 text-left"
-            } `}
-          >
-            <p>{x.content}</p>
-          </div>
-        ))}
+        {history.map((x, idx) =>
+          x.role == "system" ? null : (
+            <div
+              key={idx}
+              className={`p-2 m-2 rounded w-[80%] ${
+                x.role == "user"
+                  ? "!bg-red-100 text-right ml-auto "
+                  : " !bg-blue-100 text-left"
+              } `}
+            >
+              <p>{x.content}</p>
+            </div>
+          )
+        )}
       </div>
       <form className="w-full h-[10%] bg-violet-100 rounded w-[80%] flex justify-center items-center">
         <input
