@@ -20,13 +20,14 @@ export default function BasicChat() {
     newHistory = [...history, message];
     setHistory(newHistory);
     setUserInput("");
-    const res = await fetch("/api/chat", {
+    const res = await fetch("/api/cook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ history: newHistory }),
+      body: JSON.stringify({ history: newHistory, cookID: "1" }),
     });
 
     const data = await res.json();
+    console.log(data);
     setResponse(data[data.length - 1]);
   };
 
@@ -37,7 +38,7 @@ export default function BasicChat() {
     });
 
     if (!response) return;
-    console.log("history", history);
+    console.log(response);
     setHistory([...history, response]);
     setResponse(null);
   }, [response, history]);
