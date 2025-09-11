@@ -13,11 +13,9 @@ export interface Session {
   id: string;
   step: WaiterState;
   history: { role: string; content: string }[];
-  proposedCooks?: { id: string }[];
+  proposedCooks?: Cook[];
   selectedCookId?: string;
-  usedCooksID?: string;
-
-  selection?: string;
+  usedCooksID?: { id: string }[];
 }
 export function switchWaiterSession(session: Session) {
   switch (session.step) {
@@ -40,26 +38,25 @@ export function switchWaiterSession(session: Session) {
       return session;
 
     case "PROPOSE_COOK":
-      const cooks_proposition = getRandomCooks(session.usedCooksID || "");
+      const cooks_proposition = getRandomCooks(session.usedCooksID || []);
       session.history.push({
         role: "system",
-        content: `Be joyfull about the recipe they asked about, now you have to propose 3. 
-                    Here are the cooks: ${cooks_proposition
-                      .map((c: Cook) => `${c.name} ${c.character}`)
-                      .join(", ")}`,
+        content: `Be joyfull about the recipe they asked about, ask him to choose one of the proposed cooks`,
       });
       session.step = "COOK_SELECTED";
       session.proposedCooks = cooks_proposition;
       return session;
 
     case "COOK_SELECTED":
-      session.selectedCookId = session.selection;
       session.history.push({
         role: "system",
         content: `Give a wierd feedback about the choice the user made, the choise was ${cooks.find(
-          (c) => c.id == session.selection
+          (c) => c.id == session.selectedCookId
         )}`,
       });
+      if (!session.selectedCookId) return;
+      session.usedCooksID?.push({ id: session.selectedCookId });
+      session.proposedCooks = undefined;
       session.step = "HANDOFF_TO_COOK";
       return session;
 

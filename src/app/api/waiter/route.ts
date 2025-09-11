@@ -10,7 +10,11 @@ export async function POST(request: Request) {
   try {
     const { session } = await request.json();
     const newSession = switchWaiterSession(session);
+
+    if (!newSession)
+      return NextResponse.json({ error: "Invalid session" }, { status: 400 });
     console.log("Next Step:", newSession.step);
+
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: newSession.history,

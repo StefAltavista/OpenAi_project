@@ -9,7 +9,6 @@ type Message = { role: string; content: string };
 
 export default function BasicChat() {
   const [userInput, setUserInput] = useState("");
-  const [history, setHistory] = useState<Message[]>();
   const [session, setSession] = useState<Session>();
   const chatRef = useRef<HTMLDivElement>(null);
 
@@ -27,13 +26,11 @@ export default function BasicChat() {
     if (!session) return;
     newSession = await sessionStep(session);
     setSession(newSession);
-    setHistory(newSession.history);
   };
 
   let newHistory: Message[];
 
   const sendMessage = async () => {
-    console.log("send");
     const message = {
       role: "user",
       content: userInput,
@@ -44,14 +41,14 @@ export default function BasicChat() {
 
     setSession(newSession);
     setUserInput("");
+
     const res = await fetch("/api/waiter", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ session: newSession }),
     });
-    const data = await res.json();
-    console.log(data);
-    setSession(data);
+    const returnedSession = await res.json();
+    setSession(returnedSession);
   };
 
   useEffect(() => {
@@ -59,14 +56,14 @@ export default function BasicChat() {
       top: chatRef.current.scrollHeight,
       behavior: "smooth",
     });
-
-    // if (!response) return;
-    // console.log(response);
-    // newSession=
-    // setHistory([...history, response]);
-    // setResponse(null);
   }, [session]);
 
+  const selectCook = async (cookID: string) => {
+    console.log(session);
+    newSession = { ...session, selectedCookId: cookID };
+    const returnedSession = await sessionStep(newSession);
+    setSession(returnedSession);
+  };
   return (
     <div className="h-[80%] w-[50%] border border-violet-200 m-12 p-6 rounded flex flex-col justify-center ">
       <div
@@ -88,26 +85,43 @@ export default function BasicChat() {
               </div>
             )
           )}
+        {session &&
+          session.proposedCooks &&
+          session.proposedCooks.map((x, i) => (
+            <div
+              onClick={() => selectCook(x.id)}
+              key={i}
+              className="cursor-pointer p-2 m-2 bg-red-200"
+            >
+              <p>{x.name}</p>
+            </div>
+          ))}
       </div>
-      <form className="w-full h-[10%] bg-violet-100 rounded w-[80%] flex justify-center items-center">
-        <input
-          type="text"
-          value={userInput}
-          onChange={({ target }) => setUserInput(target.value)}
-          className="outline-none w-full h-full p-1 mx-2"
-          placeholder="type your message here"
-        />
-        <button
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-            sendMessage();
-          }}
-          className=" bg-violet-200 rounded p-2  h-10"
+      {!session?.proposedCooks && (
+        <form
+          className={`w-full h-[10%] bg-violet-100 rounded w-[80%] flex justify-center items-center`}
         >
-          Send
-        </button>
-      </form>
+          <input
+            type="text"
+            disabled={session?.proposedCooks ? true : false}
+            value={userInput}
+            onChange={({ target }) => setUserInput(target.value)}
+            className="outline-none w-full h-full p-1 mx-2"
+            placeholder="type your message here"
+          />
+          <button
+            type="submit"
+            disabled={session?.proposedCooks ? true : false}
+            onClick={(e) => {
+              e.preventDefault();
+              sendMessage();
+            }}
+            className=" bg-violet-200 rounded p-2  h-10"
+          >
+            Send
+          </button>
+        </form>
+      )}
     </div>
   );
 }
