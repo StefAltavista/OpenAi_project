@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Session } from "@/lib/switchWaiterSession";
+import { Session } from "@/lib/switchWaiterState";
 import sessionStep from "@/lib/sessionStep";
 
 export default function useInitSession() {
@@ -11,6 +11,7 @@ export default function useInitSession() {
   useEffect(() => {
     createSession();
   }, []);
+
   const createSession = async () => {
     const init: Session = {
       id: crypto.randomUUID(),

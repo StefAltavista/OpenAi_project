@@ -1,4 +1,4 @@
-import { switchWaiterSession } from "@/lib/switchWaiterSession";
+import { switchWaiterState } from "@/lib/switchWaiterState";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
@@ -9,7 +9,7 @@ const openai = new OpenAI({
 export async function POST(request: Request) {
   try {
     const { session } = await request.json();
-    const newSession = switchWaiterSession(session);
+    const newSession = switchWaiterState(session);
 
     if (!newSession)
       return NextResponse.json({ error: "Invalid session" }, { status: 400 });

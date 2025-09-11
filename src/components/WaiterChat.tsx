@@ -1,13 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Session } from "@/lib/switchWaiterSession";
+import { Session } from "@/lib/switchWaiterState";
 import sessionStep from "@/lib/sessionStep";
 import useInitSession from "@/hooks/useInitSession";
+import CookChat from "./CookChat";
 
 type Message = { role: string; content: string };
 
-export default function BasicChat() {
+export default function WaiterChat({
+  isCook,
+}: {
+  isCook: (x: boolean) => void;
+}) {
   const [userInput, setUserInput] = useState("");
   const [session, setSession] = useState<Session>();
   const chatRef = useRef<HTMLDivElement>(null);
@@ -63,6 +68,7 @@ export default function BasicChat() {
     newSession = { ...session, selectedCookId: cookID };
     const returnedSession = await sessionStep(newSession);
     setSession(returnedSession);
+    isCook(cookID);
   };
   return (
     <div className="h-[80%] w-[50%] border border-violet-200 m-12 p-6 rounded flex flex-col justify-center ">

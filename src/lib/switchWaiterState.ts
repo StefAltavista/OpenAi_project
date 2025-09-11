@@ -7,7 +7,8 @@ type WaiterState =
   | "DISRUPTION"
   | "PROPOSE_COOK"
   | "COOK_SELECTED"
-  | "HANDOFF_TO_COOK";
+  | "HANDOFF_TO_COOK"
+  | "ANOTHER_COOK";
 
 export interface Session {
   id: string;
@@ -17,7 +18,7 @@ export interface Session {
   selectedCookId?: string;
   usedCooksID?: { id: string }[];
 }
-export function switchWaiterSession(session: Session) {
+export function switchWaiterState(session: Session) {
   switch (session.step) {
     case "WELCOME":
       session.history.push({
@@ -52,7 +53,7 @@ export function switchWaiterSession(session: Session) {
         role: "system",
         content: `Give a wierd feedback about the choice the user made, the choise was ${cooks.find(
           (c) => c.id == session.selectedCookId
-        )}`,
+        )} say goodbye and handoff to the cook to give the recipe`,
       });
       if (!session.selectedCookId) return;
       session.usedCooksID?.push({ id: session.selectedCookId });

@@ -4,7 +4,14 @@ import { run } from "@openai/agents";
 
 export async function POST(request: Request) {
   const { history, cookID } = await request.json();
+  // implenet session
+
   let cookAgent;
+
+  // Passaggi possibili:
+
+  // chiedere se ha allergie o ingredinti che non ti piacciono
+  // chiedere se mangia carne & pesce o se è vegetariano o vegano
 
   try {
     cookAgent = createAgent(cookID);
@@ -22,10 +29,15 @@ export async function POST(request: Request) {
         .join("\n")
     );
 
+    // "role: assistant", content: result.finalOutput\nrole:user, content: "ok, perfetto, grazie"
+
+    // session.history.push
     history.push({
       role: "assistant",
       content: result.finalOutput,
     });
+
+    // return NextResponse.json(session);
 
     return NextResponse.json(history);
   } catch (error) {

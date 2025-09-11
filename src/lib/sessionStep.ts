@@ -1,4 +1,4 @@
-import { Session } from "./switchWaiterSession";
+import { Session } from "./switchWaiterState";
 
 export default async function sessionStep(session: Session) {
   const res = await fetch("/api/waiter", {

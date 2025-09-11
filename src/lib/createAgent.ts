@@ -11,6 +11,7 @@ export default function createCookAgent(cookID: string): Agent {
   if (!cook) {
     throw error({ error: "Cook not found" });
   }
+
   const instructions = `You are ${cook.name}, introduce yourself briefly.
     A ${cook.character.toLowerCase()} ${cook.cousine} cook from ${cook.origin}.
     Your communication style is ${cook.communication.join(" and ")}.
