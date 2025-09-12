@@ -1,34 +1,55 @@
 "use client";
 
+import useInitSession from "@/hooks/useInitSession";
+import sessionStep from "@/lib/sessionStep";
+import { CookSession } from "@/lib/switchCookState";
 import { useEffect, useRef, useState } from "react";
 
-type Message = { role: string; content: string };
-
-export default function CookChat({ cookID }: { cookID: string | boolean }) {
+export default function CookChat({
+  cookID,
+  recipe,
+}: {
+  cookID: string;
+  recipe: string;
+}) {
   const [userInput, setUserInput] = useState("");
-  const [history, setHistory] = useState<Message[]>([]);
-  const [response, setResponse] = useState<Message | null>(null);
+  const [session, setSession] = useState<CookSession | null>(null);
+  const [loading, setLoading] = useState<boolean>();
   const chatRef = useRef<HTMLDivElement>(null);
 
-  let newHistory: Message[];
+  const initialValue: CookSession = {
+    id: crypto.randomUUID(),
+    step: "SALUTE",
+    history: [],
+    cookID,
+    recipe,
+  };
+
+  const { sessionInit, error, loadingSession } = useInitSession(
+    initialValue,
+    "api/cook"
+  );
+
+  useEffect(() => {
+    setLoading(loadingSession);
+    if (sessionInit && !error) {
+      setSession(sessionInit);
+    }
+  }, [sessionInit, error, loadingSession]);
+
+  let newSession: CookSession;
   const sendMessage = async () => {
     const message = {
       role: "user",
       content: userInput,
     };
 
-    newHistory = [...history, message];
-    setHistory(newHistory);
+    if (!session) return;
+    newSession = { ...session, history: [...session.history, message] };
+    setSession(newSession); //add user mesasge to session
     setUserInput("");
-    const res = await fetch("/api/cook", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ history: newHistory, cookID: cookID }),
-    });
-
-    const data = await res.json();
-    console.log(data);
-    setResponse(data[data.length - 1]);
+    newSession = await sessionStep(newSession, "/api/cook"); //get api response
+    setSession(newSession);
   };
 
   useEffect(() => {
@@ -36,32 +57,30 @@ export default function CookChat({ cookID }: { cookID: string | boolean }) {
       top: chatRef.current.scrollHeight,
       behavior: "smooth",
     });
+  }, [session]);
 
-    if (!response) return;
-    console.log(response);
-    setHistory([...history, response]);
-    setResponse(null);
-  }, [response, history]);
   return (
     <div className="h-[80%] w-[50%] border border-violet-200 m-12 p-6 rounded flex flex-col justify-center ">
       <div
         ref={chatRef}
         className="w-full flex flex-col h-[90%] overflow-y-auto hide-scrollbar"
       >
-        {history.map((x, idx) =>
-          x.role == "system" ? null : (
-            <div
-              key={idx}
-              className={`p-2 m-2 rounded w-[80%] ${
-                x.role == "user"
-                  ? "!bg-red-100 text-right ml-auto "
-                  : " !bg-blue-100 text-left"
-              } `}
-            >
-              <p>{x.content}</p>
-            </div>
-          )
-        )}
+        {loading && <div>...Loading</div>}
+        {session &&
+          session.history.map((x, idx) =>
+            x.role == "system" ? null : (
+              <div
+                key={idx}
+                className={`p-2 m-2 rounded w-[80%] ${
+                  x.role == "user"
+                    ? "!bg-red-100 text-right ml-auto "
+                    : " !bg-blue-100 text-left"
+                } `}
+              >
+                <p>{x.content}</p>
+              </div>
+            )
+          )}
       </div>
       <form className="w-full h-[10%] bg-violet-100 rounded w-[80%] flex justify-center items-center">
         <input

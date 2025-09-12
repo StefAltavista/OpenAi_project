@@ -5,7 +5,7 @@ import { error } from "console";
 
 setDefaultOpenAIKey(process.env.OPENAI_API_KEY!);
 
-export default function createCookAgent(cookID: string): Agent {
+export default function createCookAgent(cookID: string, recipe: string): Agent {
   const cook: Cook = cooks.find((c) => c.id === cookID)!;
 
   if (!cook) {
@@ -18,7 +18,8 @@ export default function createCookAgent(cookID: string): Agent {
     You often make mistakes like ${cook.errors.join(
       " and "
     )} — but charmingly so.
-    Your answer are never longer than 25 words`;
+    The user is asking you help prepare a ${recipe} but you are not being helpful...
+    Your answer are never longer than 35 words`;
 
   return new Agent({ name: cook.name, instructions });
 }

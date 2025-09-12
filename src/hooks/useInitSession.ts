@@ -2,9 +2,13 @@
 import { useEffect, useState } from "react";
 import { Session } from "@/lib/switchWaiterState";
 import sessionStep from "@/lib/sessionStep";
+import { CookSession } from "@/lib/switchCookState";
 
-export default function useInitSession() {
-  const [sessionInit, setSessionInit] = useState<Session>();
+export default function useInitSession<T extends Session | CookSession>(
+  init: T,
+  url: string
+) {
+  const [sessionInit, setSessionInit] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loadingSession, setLoadingSession] = useState(true);
 
@@ -13,14 +17,8 @@ export default function useInitSession() {
   }, []);
 
   const createSession = async () => {
-    const init: Session = {
-      id: crypto.randomUUID(),
-      step: "WELCOME",
-      history: [],
-    };
-
     try {
-      const session = await sessionStep(init);
+      const session = await sessionStep(init, url);
       setSessionInit(session);
     } catch {
       setError("Failed to create session");

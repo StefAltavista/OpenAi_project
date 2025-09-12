@@ -9,7 +9,7 @@ const openai = new OpenAI({
 export async function POST(request: Request) {
   try {
     const { session } = await request.json();
-    const newSession = switchWaiterState(session);
+    const newSession = await switchWaiterState(session);
 
     if (!newSession)
       return NextResponse.json({ error: "Invalid session" }, { status: 400 });

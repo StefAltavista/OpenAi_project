@@ -1,5 +1,7 @@
 import { cooks, Cook } from "@/data/cooks";
 import getRandomCooks from "./getRandomCooks";
+import { ai_assistant } from "./ai_assistant";
+import { run } from "@openai/agents";
 
 type WaiterState =
   | "WELCOME"
@@ -17,14 +19,15 @@ export interface Session {
   proposedCooks?: Cook[];
   selectedCookId?: string;
   usedCooksID?: { id: string }[];
+  recipe?: string;
 }
-export function switchWaiterState(session: Session) {
+export async function switchWaiterState(session: Session) {
   switch (session.step) {
     case "WELCOME":
       session.history.push({
         role: "system",
         content:
-          " You are a digital Waiter in an app that provides recipes upon request. First of all greet the user, welcome them to our App Restaurant called SummerCamp Bistrò. Ask them how they are doing today",
+          " You are a digital Waiter in an app that provides recipes upon request. Greet the user, welcome them to our App Restaurant called SummerCamp Bistrò.",
       });
       session.step = "ASK_RECIPE";
       return session;
@@ -33,12 +36,22 @@ export function switchWaiterState(session: Session) {
       session.history.push({
         role: "system",
         content:
-          "Answer politelly to whatever the user says. Ask him what recipe would he like to discover today.",
+          "Answer politelly to whatever the user says. Ask him what recipe would he like to discover today. ",
       });
       session.step = "PROPOSE_COOK";
       return session;
 
     case "PROPOSE_COOK":
+      const bot = ai_assistant();
+      const response = await run(
+        bot,
+        `extrapolate the name of the recipe from this message as "recipe": ${
+          session.history[session.history.length - 1].content
+        } `
+      );
+      if (!response.finalOutput) return;
+      session.recipe = JSON.parse(response.finalOutput).recipe;
+
       const cooks_proposition = getRandomCooks(session.usedCooksID || []);
       session.history.push({
         role: "system",

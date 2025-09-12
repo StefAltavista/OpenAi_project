@@ -4,36 +4,39 @@ import { useEffect, useRef, useState } from "react";
 import { Session } from "@/lib/switchWaiterState";
 import sessionStep from "@/lib/sessionStep";
 import useInitSession from "@/hooks/useInitSession";
-import CookChat from "./CookChat";
-
-type Message = { role: string; content: string };
 
 export default function WaiterChat({
-  isCook,
+  setIsCook,
+  setCookID,
+  setRecipe,
 }: {
-  isCook: (x: boolean) => void;
+  setIsCook: (x: boolean) => void;
+  setCookID: (x: string) => void;
+  setRecipe: (x: string) => void;
 }) {
   const [userInput, setUserInput] = useState("");
   const [session, setSession] = useState<Session>();
+  const [loading, setLoading] = useState(true);
   const chatRef = useRef<HTMLDivElement>(null);
 
   let newSession: Session;
 
-  const { sessionInit, error, loadingSession } = useInitSession();
+  const initialValue: Session = {
+    id: crypto.randomUUID(),
+    step: "WELCOME",
+    history: [],
+  };
+  const { sessionInit, error, loadingSession } = useInitSession(
+    initialValue,
+    "api/waiter"
+  );
 
   useEffect(() => {
+    setLoading(loadingSession);
     if (sessionInit && !error) {
       setSession(sessionInit);
     }
-  }, [sessionInit]);
-
-  const step = async () => {
-    if (!session) return;
-    newSession = await sessionStep(session);
-    setSession(newSession);
-  };
-
-  let newHistory: Message[];
+  }, [sessionInit, error, loadingSession]);
 
   const sendMessage = async () => {
     const message = {
@@ -43,17 +46,10 @@ export default function WaiterChat({
 
     if (!session) return;
     newSession = { ...session, history: [...session.history, message] };
-
-    setSession(newSession);
+    setSession(newSession); //add user comment to session
     setUserInput("");
-
-    const res = await fetch("/api/waiter", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session: newSession }),
-    });
-    const returnedSession = await res.json();
-    setSession(returnedSession);
+    newSession = await sessionStep(newSession, "/api/waiter"); //get api response
+    setSession(newSession);
   };
 
   useEffect(() => {
@@ -61,14 +57,17 @@ export default function WaiterChat({
       top: chatRef.current.scrollHeight,
       behavior: "smooth",
     });
+    if (session?.recipe) {
+      setRecipe(session.recipe);
+    }
   }, [session]);
 
   const selectCook = async (cookID: string) => {
-    console.log(session);
     newSession = { ...session, selectedCookId: cookID };
-    const returnedSession = await sessionStep(newSession);
+    const returnedSession = await sessionStep(newSession, "/api/waiter");
     setSession(returnedSession);
-    isCook(cookID);
+    setIsCook(true);
+    setCookID(cookID);
   };
   return (
     <div className="h-[80%] w-[50%] border border-violet-200 m-12 p-6 rounded flex flex-col justify-center ">
@@ -76,6 +75,7 @@ export default function WaiterChat({
         ref={chatRef}
         className="w-full flex flex-col h-[90%] overflow-y-auto hide-scrollbar"
       >
+        {loading && <div>...Loading</div>}
         {session &&
           session.history.map((x, idx) =>
             x.role == "system" ? null : (
