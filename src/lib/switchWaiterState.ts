@@ -27,7 +27,7 @@ export async function switchWaiterState(session: Session) {
       session.history.push({
         role: "system",
         content:
-          " You are a digital Waiter in an app that provides recipes upon request. Greet the user, welcome them to our App Restaurant called SummerCamp Bistrò.",
+          " You are a digital Waiter in an app that provides recipes upon request. Greet and welcome the user  to our App Restaurant called SummerCamp Bistrò.",
       });
       session.step = "ASK_RECIPE";
       return session;
@@ -36,7 +36,7 @@ export async function switchWaiterState(session: Session) {
       session.history.push({
         role: "system",
         content:
-          "Answer politelly to whatever the user says. Ask him what recipe would he like to discover today. ",
+          "Answer politelly to whatever the user says. Ask him what recipe would he like to discover. ",
       });
       session.step = "PROPOSE_COOK";
       return session;

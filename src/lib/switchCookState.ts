@@ -1,8 +1,13 @@
 import { run } from "@openai/agents";
 import { ai_assistant } from "./ai_assistant";
 
-type WaiterState = "SALUTE" | "ASK_ALLERGY" | "ASK_DIET" | "LIST_INGREDIENTS";
-type Diet = "OMNIVOROUS" | "VEGETARIAN" | "VEGAN" | "PESCATARIAN";
+type WaiterState =
+  | "SALUTE"
+  | "ASK_ALLERGY"
+  | "ASK_DIET"
+  | "RANDOM_QUESTION"
+  | "LIST_INGREDIENTS"
+  | "END";
 
 export interface CookSession {
   id: string;
@@ -11,7 +16,8 @@ export interface CookSession {
   step: WaiterState;
   history: { role: string; content: string }[];
   allergies?: string[];
-  diet?: Diet;
+  diet?: string[];
+  ingredients?: string[];
 }
 
 export default async function switchCookState(
@@ -23,49 +29,67 @@ export default async function switchCookState(
     case "SALUTE":
       session.history.push({
         role: "system",
-        content: `Say Hello to our guest, and make a silly comment about the recipe`,
+        content: `Say Hello to our guest, make a silly comment about the recipe and ask if the user is on a specific diet`,
       });
       session.step = "ASK_ALLERGY";
       return session;
 
     case "ASK_ALLERGY":
-      session.history.push({
-        role: "system",
-        content: `ask if the user has any allregies `,
-      });
-      session.step = "ASK_DIET";
-      return session;
-    case "ASK_DIET":
       response = await run(
         bot,
-        `extrapolate the possible allergies from this message as "allergies" in an array: ${
-          session.history[session.history.length - 1].content
-        } `
-      );
-      if (!response.finalOutput) return session;
-      session.allergies = JSON.parse(response.finalOutput).allergies;
-      console.log(JSON.parse(response.finalOutput));
-      session.history.push({
-        role: "system",
-        content: `ask if the user has any specific diet `,
-      });
-      session.step = "LIST_INGREDIENTS";
-      return session;
-    case "LIST_INGREDIENTS":
-      response = await run(
-        bot,
-        `extrapolate the diet from this message as {"diet":string} : ${
+        `extrapolate the diets, if any, as "diet":string[]  from this message: ${
           session.history[session.history.length - 1].content
         } `
       );
 
-      if (!response.finalOutput) return session;
-      session.allergies = JSON.parse(response.finalOutput).diet;
+      if (response.finalOutput) {
+        try {
+          session.diet = JSON.parse(response.finalOutput).diet;
+          console.log(session.diet);
+        } catch {
+          session.diet = [""];
+        }
+      }
       session.history.push({
         role: "system",
-        content: `ok now give a wrong recipe `,
+        content: `ask if the user has any alleregies `,
       });
-      session.step = "SALUTE";
+      session.step = "RANDOM_QUESTION";
+      return session;
+    case "RANDOM_QUESTION":
+      response = await run(
+        bot,
+        `extrapolate the allergies, if any, as "allergies":string[] from this message : ${
+          session.history[session.history.length - 1].content
+        } `
+      );
+      if (response.finalOutput) {
+        try {
+          session.allergies = JSON.parse(response.finalOutput).allergies;
+          console.log(JSON.parse(response.finalOutput));
+        } catch {
+          session.allergies = [""];
+        }
+      }
+
+      session.history.push({
+        role: "system",
+        content: `make a completely random question`,
+      });
+      session.step = "LIST_INGREDIENTS";
+      return session;
+
+    case "LIST_INGREDIENTS":
+      session.history.push({
+        role: "system",
+        content: `Now give a wrong recipe... (at the end of the message also add a list of ingredients with random scales and maybe some allergens or non-dietary ingridients?) `,
+      });
+      session.step = "END";
+      return session;
+
+    case "END":
+      return session;
+    default:
       return session;
   }
 }

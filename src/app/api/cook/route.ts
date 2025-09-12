@@ -2,6 +2,7 @@ import createAgent from "@/lib/createAgent";
 import { NextResponse } from "next/server";
 import { run } from "@openai/agents";
 import switchCookState, { CookSession } from "@/lib/switchCookState";
+import { ai_assistant } from "@/lib/ai_assistant";
 
 export async function POST(request: Request) {
   const { session } = await request.json();
@@ -25,13 +26,30 @@ export async function POST(request: Request) {
         .join("\n")
     );
 
-    if (!result.finalOutput) return;
-    newSession.history.push({
-      role: "assistant",
-      content: result.finalOutput,
-    });
+    if (session.step == "END") {
+      const bot = ai_assistant();
+      const getIngredientsList = await run(
+        bot,
+        `from the following message extrapolate the ingredients list in JSON format and put the message (without list) in a separate field "message" : ${result.finalOutput}`
+      );
+      if (getIngredientsList.finalOutput) {
+        newSession.history.push({
+          role: "assistant",
+          content: JSON.parse(getIngredientsList.finalOutput).message,
+        });
+        newSession.ingredients = JSON.parse(
+          getIngredientsList.finalOutput
+        ).ingredients;
+        return NextResponse.json(newSession);
+      }
+    } else if (!result.finalOutput) return;
+    else
+      newSession.history.push({
+        role: "assistant",
+        content: result.finalOutput,
+      });
 
-    return NextResponse.json(session);
+    return NextResponse.json(newSession);
   } catch (error) {
     console.error("Error generating AI response:", error);
     return NextResponse.json(

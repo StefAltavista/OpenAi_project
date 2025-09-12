@@ -48,7 +48,10 @@ export default function WaiterChat({
     newSession = { ...session, history: [...session.history, message] };
     setSession(newSession); //add user comment to session
     setUserInput("");
+    setLoading(true);
     newSession = await sessionStep(newSession, "/api/waiter"); //get api response
+    setLoading(false);
+
     setSession(newSession);
   };
 
@@ -63,19 +66,25 @@ export default function WaiterChat({
   }, [session]);
 
   const selectCook = async (cookID: string) => {
+    setLoading(true);
     newSession = { ...session, selectedCookId: cookID };
     const returnedSession = await sessionStep(newSession, "/api/waiter");
     setSession(returnedSession);
     setIsCook(true);
     setCookID(cookID);
+    setLoading(false);
   };
   return (
-    <div className="h-[80%] w-[50%] border border-violet-200 m-12 p-6 rounded flex flex-col justify-center ">
+    <div className=" relative h-[80%] w-[50%] border border-violet-200 m-12 p-6 rounded flex flex-col justify-center ">
+      {loading && (
+        <div className="left-0 absolute w-full h-full bg-red-200/10 backdrop-blur-[2px] flex justify-center items-center">
+          <p className="p-2 bg-blue-200 rounded">...Loading</p>
+        </div>
+      )}
       <div
         ref={chatRef}
         className="w-full flex flex-col h-[90%] overflow-y-auto hide-scrollbar"
       >
-        {loading && <div>...Loading</div>}
         {session &&
           session.history.map((x, idx) =>
             x.role == "system" ? null : (
