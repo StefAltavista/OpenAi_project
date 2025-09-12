@@ -3,14 +3,7 @@ import getRandomCooks from "./getRandomCooks";
 import { ai_assistant } from "./ai_assistant";
 import { run } from "@openai/agents";
 
-type WaiterState =
-  | "WELCOME"
-  | "ASK_RECIPE"
-  | "DISRUPTION"
-  | "PROPOSE_COOK"
-  | "COOK_SELECTED"
-  | "HANDOFF_TO_COOK"
-  | "ANOTHER_COOK";
+type WaiterState = "WELCOME" | "ASK_RECIPE" | "PROPOSE_COOK" | "COOK_SELECTED";
 
 export interface Session {
   id: string;
@@ -21,6 +14,7 @@ export interface Session {
   usedCooksID?: { id: string }[];
   recipe?: string;
 }
+
 export async function switchWaiterState(session: Session) {
   switch (session.step) {
     case "WELCOME":
