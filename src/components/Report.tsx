@@ -6,10 +6,10 @@ export default function Report({
   allergies,
   ingredients,
 }: {
-  recipe?: string;
-  diet?: string[];
-  allergies?: string[];
-  ingredients?: string[];
+  recipe: string | null;
+  diet: string[] | null;
+  allergies: string[] | null;
+  ingredients: string[] | null;
 }) {
   useEffect(() => {});
 

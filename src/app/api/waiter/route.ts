@@ -1,6 +1,7 @@
 import { switchWaiterState } from "@/lib/switchWaiterState";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import type { ChatCompletionMessageParam } from "openai/resources/chat";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -17,7 +18,7 @@ export async function POST(request: Request) {
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      messages: newSession.history,
+      messages: newSession.history as ChatCompletionMessageParam[],
     });
 
     session.history.push({

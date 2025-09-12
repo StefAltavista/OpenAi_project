@@ -113,7 +113,7 @@ export default function CookChat({
             </button>
             <button
               className="cursor-pointer hover:bg-green-200 bg-violet-200 rounded p-2"
-              onClick={() => close(false)}
+              onClick={() => close}
             >
               No, Take me back to the waiter
             </button>

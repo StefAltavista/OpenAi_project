@@ -9,9 +9,10 @@ export default function Home() {
   const [isCook, setIsCook] = useState(false);
   const [cookID, setCookID] = useState("");
   const [recipe, setRecipe] = useState("");
-  const [allergies, setAllergies] = useState<string[] | null>();
-  const [diet, setDiet] = useState<string[] | null>();
-  const [ingredients, setIngredients] = useState<string[] | null>();
+  const [allergies, setAllergies] = useState<string[] | null>(null);
+  const [diet, setDiet] = useState<string[] | null>(null);
+  const [ingredients, setIngredients] = useState<string[] | null>(null);
+
   useEffect(() => {
     if (!isCook) {
       setRecipe("");

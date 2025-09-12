@@ -15,7 +15,6 @@ export default function WaiterChat({
   setRecipe: (x: string) => void;
 }) {
   const [userInput, setUserInput] = useState("");
-  const [session, setSession] = useState<Session>();
   const [loading, setLoading] = useState(true);
   const chatRef = useRef<HTMLDivElement>(null);
 
@@ -26,6 +25,8 @@ export default function WaiterChat({
     step: "WELCOME",
     history: [],
   };
+  const [session, setSession] = useState<Session>(initialValue);
+
   const { sessionInit, error, loadingSession } = useInitSession(
     initialValue,
     "api/waiter"
