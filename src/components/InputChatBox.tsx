@@ -1,11 +1,11 @@
-import React, {useState} from "react";
-import {FaTelegramPlane} from "react-icons/fa";
+import React, { useState } from "react";
+import { FaTelegramPlane } from "react-icons/fa";
 
-type InputChatBoxArgs = {
+type InputChatBoxProps = {
   sendMessage: (input: string) => void,
 };
 
-export default function InputChatBox({sendMessage}: InputChatBoxArgs) {
+export default function InputChatBox(inputChatBoxProps: InputChatBoxProps) {
   const [userInput, setUserInput] = useState("");
 
   return (
@@ -26,7 +26,7 @@ export default function InputChatBox({sendMessage}: InputChatBoxArgs) {
       <input
         type="text"
         value={userInput}
-        onChange={({target}) => setUserInput(target.value)}
+        onChange={({ target }) => setUserInput(target.value)}
         className="outline-none p-1 m-2 placeholder:truncate"
         placeholder="Enter your message..."
       />
@@ -35,7 +35,7 @@ export default function InputChatBox({sendMessage}: InputChatBoxArgs) {
         onClick={(e) => {
           e.preventDefault();
           if (userInput.trim() !== "") {
-            sendMessage(userInput);
+            inputChatBoxProps.sendMessage(userInput);
           }
           setUserInput("");
         }}
