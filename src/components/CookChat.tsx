@@ -4,6 +4,7 @@ import useInitSession from "@/hooks/useInitSession";
 import sessionStep from "@/lib/sessionStep";
 import { CookSession } from "@/lib/switchCookState";
 import { useEffect, useRef, useState } from "react";
+import InputChatBox from "@/components/InputChatBox";
 
 export default function CookChat({
   cookID,
@@ -47,11 +48,15 @@ export default function CookChat({
   }, [sessionInit, error, loadingSession]);
 
   let newSession: CookSession;
-  const sendMessage = async () => {
+
+  const sendMessage = async (input: string) => {
+
     const message = {
       role: "user",
-      content: userInput,
+      content: input,
     };
+
+    console.log("DEBUG: Prepared message: ", message);
 
     if (!session) return;
     newSession = { ...session, history: [...session.history, message] };
@@ -80,7 +85,8 @@ export default function CookChat({
   return (
     <div className="relative h-[80%] w-[50%] border border-violet-200 m-12 p-6 rounded flex flex-col justify-center ">
       {loading && (
-        <div className="left-0 absolute w-full h-full bg-red-200/10 backdrop-blur-[2px] flex justify-center items-center">
+        <div
+          className="left-0 absolute w-full h-full bg-red-200/10 backdrop-blur-[2px] flex justify-center items-center">
           <p className="p-2 bg-blue-200 rounded">...Loading</p>
         </div>
       )}
@@ -120,25 +126,7 @@ export default function CookChat({
           </div>
         </div>
       )}
-      <form className="w-full h-[10%] bg-violet-100 rounded w-[80%] flex justify-center items-center">
-        <input
-          type="text"
-          value={userInput}
-          onChange={({ target }) => setUserInput(target.value)}
-          className="outline-none w-full h-full p-1 mx-2"
-          placeholder="type your message here"
-        />
-        <button
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-            sendMessage();
-          }}
-          className=" bg-violet-200 rounded p-2  h-10"
-        >
-          Send
-        </button>
-      </form>
+      <InputChatBox sendMessage={sendMessage}/>
     </div>
   );
 }
