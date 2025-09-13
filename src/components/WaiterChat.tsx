@@ -15,7 +15,6 @@ export default function WaiterChat({
   setCookID: (x: string) => void;
   setRecipe: (x: string) => void;
 }) {
-  const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(true);
   const chatRef = useRef<HTMLDivElement>(null);
 
@@ -40,10 +39,10 @@ export default function WaiterChat({
     }
   }, [sessionInit, error, loadingSession]);
 
-  const sendMessage = async () => {
+  const sendMessage = async (input: string) => {
     const message = {
       role: "user",
-      content: userInput,
+      content: input,
     };
 
     console.log("Prepared message: ", message);
@@ -51,7 +50,6 @@ export default function WaiterChat({
     if (!session) return;
     newSession = { ...session, history: [...session.history, message] };
     setSession(newSession); //add user comment to session
-    setUserInput("");
     setLoading(true);
     newSession = await sessionStep(newSession, "/api/waiter"); //get api response
     setLoading(false);

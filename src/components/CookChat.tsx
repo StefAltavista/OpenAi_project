@@ -21,7 +21,6 @@ export default function CookChat({
   setIngredients: (x: string[]) => void;
   close: () => void;
 }) {
-  const [userInput, setUserInput] = useState("");
   const [session, setSession] = useState<CookSession | null>(null);
   const [loading, setLoading] = useState<boolean>();
   const [end, setEnd] = useState(false);
@@ -61,7 +60,6 @@ export default function CookChat({
     if (!session) return;
     newSession = { ...session, history: [...session.history, message] };
     setSession(newSession); //add user mesasge to session
-    setUserInput("");
     setLoading(true);
     newSession = await sessionStep(newSession, "/api/cook"); //get api response
     setSession(newSession);
