@@ -55,8 +55,6 @@ export default function CookChat({
       content: input,
     };
 
-    console.log("DEBUG: Prepared message: ", message);
-
     if (!session) return;
     newSession = { ...session, history: [...session.history, message] };
     setSession(newSession); //add user mesasge to session

@@ -2,7 +2,7 @@
 
 import CookChat from "@/components/CookChat";
 import Report from "@/components/Report";
-import WaiterChat from "@/components/WaiterChat";
+import ChatBox from "@/components/ChatBox";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -24,11 +24,7 @@ export default function Home() {
   return (
     <div className="h-[80vh] w-full flex ">
       {!isCook && (
-        <WaiterChat
-          setIsCook={(x) => setIsCook(x)}
-          setCookID={(x) => setCookID(x)}
-          setRecipe={(x) => setRecipe(x)}
-        />
+        <ChatBox/>
       )}
       {isCook && (
         <CookChat
