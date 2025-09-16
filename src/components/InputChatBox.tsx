@@ -12,7 +12,8 @@ export default function InputChatBox(inputChatBoxProps: InputChatBoxProps) {
     <form
       className="
         w-full
-        lg:w-3/5
+        sm:w-4/5
+        xl:w-3/5
         mx-auto
         bg-white
         rounded-2xl
