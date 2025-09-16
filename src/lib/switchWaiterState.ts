@@ -3,7 +3,13 @@ import getRandomCooks from "./getRandomCooks";
 import { ai_assistant } from "./ai_assistant";
 import { run } from "@openai/agents";
 
-type WaiterState = "WELCOME" | "ASK_RECIPE" | "PROPOSE_COOK" | "COOK_SELECTED";
+type WaiterState =
+  | "WELCOME"
+  | "ASK_RECIPE"
+  | "PROPOSE_COOK"
+  | "COOK_SELECTED"
+  | "HANDOFF_TO_COOK"
+  | "RETURN_FROM_PREVIOUS_COOK";
 
 export interface Session {
   id: string;
@@ -15,8 +21,10 @@ export interface Session {
   recipe?: string;
 }
 
+// Function to switch the state of the waiter session based on the current step
 export async function switchWaiterState(session: Session) {
   switch (session.step) {
+    // Initial greeting and asking about recipe
     case "WELCOME":
       session.history.push({
         role: "system",
@@ -26,6 +34,7 @@ export async function switchWaiterState(session: Session) {
       session.step = "ASK_RECIPE";
       return session;
 
+    // Asking about the recipe the user wants to discover
     case "ASK_RECIPE":
       session.history.push({
         role: "system",
@@ -35,6 +44,7 @@ export async function switchWaiterState(session: Session) {
       session.step = "PROPOSE_COOK";
       return session;
 
+    // Proposing a list of cooks based on the requested recipe
     case "PROPOSE_COOK":
       const bot = ai_assistant();
       const response = await run(
@@ -55,6 +65,7 @@ export async function switchWaiterState(session: Session) {
       session.proposedCooks = cooks_proposition;
       return session;
 
+    // Handling the cook selection and handing off to the cook
     case "COOK_SELECTED":
       session.history.push({
         role: "system",
@@ -66,6 +77,17 @@ export async function switchWaiterState(session: Session) {
       session.usedCooksID?.push({ id: session.selectedCookId });
       session.proposedCooks = undefined;
       session.step = "HANDOFF_TO_COOK";
+      return session;
+
+    // Handling the return from the previous cook
+    case "RETURN_FROM_PREVIOUS_COOK":
+      session.history.push({
+        role: "system",
+        content: `Welcome back the user, say that you are sorry that the previous cook could not help him, and that you will propose a new cook, based on his previous choice`,
+      });
+      const newCooks = getRandomCooks(session.usedCooksID || []);
+      session.proposedCooks = newCooks;
+      session.step = "COOK_SELECTED";
       return session;
 
     default:

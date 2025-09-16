@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+//import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
+import Header from "@/components/Header";
 export const metadata: Metadata = {
   title: "OpenAi Project",
   description: "",
@@ -15,13 +15,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="w-full  bg-red-100 flex justify-center items-center">
-          HEADER
-        </div>
+        <Header />
         {children}
-        <div className="w-full h-[100px] bg-red-100 flex justify-center items-center">
-          FOOTER
-        </div>
       </body>
     </html>
   );
