@@ -69,11 +69,28 @@ export default function ChatBox() {
     setCookChat(true);
   };
 
+  const backToWaiter = async () => {
+
+  }
+
   return (
     <div
-      className=" relative h-[100dvh] lg:w-4/5 mx-auto border border-violet-200 p-6 rounded flex flex-col justify-center ">
+      className="
+        relative h-[90dvh]
+        lg:w-5/6
+        mx-auto
+        border
+        border-violet-200
+        p-6 rounded
+        flex
+        flex-col
+        justify-center
+      ">
+
       <ChatHistory
         history={chatHistory ? chatHistory : []}
+
+        // TODO: proposing cooks should open a modal
         proposedCooks={waiterSession?.proposedCooks ? waiterSession.proposedCooks : []}
         selectCookFunc={selectCook}
       />

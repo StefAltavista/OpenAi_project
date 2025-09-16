@@ -12,13 +12,14 @@ export default function InputChatBox(inputChatBoxProps: InputChatBoxProps) {
     <form
       className="
         w-full
-        lg:w-4/5
+        lg:w-3/5
         mx-auto
         bg-white
         rounded-2xl
         flex
         flex-col
         border-3
+        mt-5
         border-red-600"
     >
       <input
