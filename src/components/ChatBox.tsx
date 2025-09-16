@@ -11,25 +11,23 @@ import { CookSession } from "@/lib/switchCookState";
 import sessionStep from "@/lib/sessionStep";
 
 export default function ChatBox() {
-  const [loading, setLoading] = useState(true);
   const [waiterSession, setWaiterSession] = useState<Session>(getInitialWaiterValue());
   const [cookSession, setCookSession] = useState<CookSession>(getInitialCookValue("", ""));
   const [recipe, setRecipe] = useState("");
   const [cookChat, setCookChat] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistoryMessages[]>([]);
 
-  const { sessionInit, error, loadingSession } = useInitSession(
+  const { sessionInit, error } = useInitSession(
     waiterSession,
     "api/waiter"
   );
 
   useEffect(() => {
-    setLoading(loadingSession);
     if (sessionInit && !error) {
       setWaiterSession(sessionInit);
       addHistoryMessage(sessionInit.history[sessionInit.history.length - 1]);
     }
-  }, [sessionInit, error, loadingSession]);
+  }, [sessionInit, error]);
 
   const addHistoryMessage = (message: ChatHistoryMessages): void => {
     setChatHistory(prev => [...prev, message]);
@@ -72,14 +70,8 @@ export default function ChatBox() {
   };
 
   return (
-    <div className=" relative h-[80%] w-[50%] border border-violet-200 m-12 p-6 rounded flex flex-col justify-center ">
-      {loading && (
-        <div
-          className="left-0 absolute w-full h-full bg-red-200/10 backdrop-blur-[2px] flex justify-center items-center">
-          <p className="p-2 bg-blue-200 rounded">...Loading</p>
-        </div>
-      )}
-
+    <div
+      className=" relative h-[100dvh] lg:w-4/5 mx-auto border border-violet-200 p-6 rounded flex flex-col justify-center ">
       <ChatHistory
         history={chatHistory ? chatHistory : []}
         proposedCooks={waiterSession?.proposedCooks ? waiterSession.proposedCooks : []}

@@ -34,7 +34,7 @@ export default function CookChat({
     recipe,
   };
 
-  const { sessionInit, error, loadingSession } = useInitSession(
+  const { sessionInit, error } = useInitSession(
     initialValue,
     "api/cook"
   );
