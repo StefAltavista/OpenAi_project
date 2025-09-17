@@ -10,7 +10,6 @@ export default function useInitSession<T extends Session | CookSession>(
 ) {
   const [sessionInit, setSessionInit] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loadingSession, setLoadingSession] = useState(true);
 
   useEffect(() => {
     createSession();
@@ -22,10 +21,8 @@ export default function useInitSession<T extends Session | CookSession>(
       setSessionInit(session);
     } catch {
       setError("Failed to create session");
-    } finally {
-      setLoadingSession(false);
     }
   };
 
-  return { sessionInit, error, loadingSession };
+  return { sessionInit, error };
 }
