@@ -134,10 +134,10 @@ export default function WaiterChat({
                 {session.proposedCooks?.map((cook, i) => (
                   <div
                     key={i}
-                    className="flex flex-col items-center cursor-pointer  hover:scale-105  transition-all"
+                    className="group flex flex-col items-center cursor-pointer  hover:scale-105  transition-all"
                     onClick={() => selectCook(cook.id)}
                   >
-                    <div className="w-32 h-32 rounded-full flex items-center justify-center mb-3 hover:shadow-lg">
+                    <div className="w-32 h-32 rounded-full flex items-center justify-center mb-3 group-hover:shadow-lg">
                       <Image
                         src={cook.avatar}
                         alt={cook.name}
@@ -146,9 +146,13 @@ export default function WaiterChat({
                         className="rounded-full"
                       />
                     </div>
-                    <p className="px-4 py-1 border-2 border-red-400 text-red-500 rounded-full font-medium hover:shadow-lg hover:text-red-700">
+                    <p className="px-4 py-1 border-2 border-red-400 text-red-500 rounded-full font-medium group-hover:shadow-lg group-hover:text-red-700">
                       {cook.name}
                     </p>
+                    <div className="text-sm text-gray-500 mt-2 group-hover:visible invisible">
+                      <p>Origin: {cook.origin}</p>
+                      <p>Cuisine: {cook.cousine}</p>
+                    </div>
                   </div>
                 ))}
               </div>
