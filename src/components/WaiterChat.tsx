@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Session } from "@/lib/switchWaiterState";
 import sessionStep from "@/lib/sessionStep";
 import useInitSession from "@/hooks/useInitSession";
-import UserInput from "./UserInput";
+import Modal from "./Modal";
+import Image from "next/image";
 
 export default function WaiterChat({
   setIsCook,
@@ -67,6 +68,7 @@ export default function WaiterChat({
     }
   }, [session]);
 
+  // Select cook from modal
   const selectCook = async (cookID: string) => {
     setLoading(true);
     newSession = { ...session, selectedCookId: cookID };
@@ -75,62 +77,128 @@ export default function WaiterChat({
     setIsCook(true);
     setCookID(cookID);
     setLoading(false);
+    setIsModalOpen(false); // Close modal after selecting a cook
   };
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Show fail text if user tries to close modal without selecting a cook
+  const [failText, setFailText] = useState("");
+
+  useEffect(() => {
+    if (session?.proposedCooks) {
+      setIsModalOpen(true);
+    }
+  }, [session?.proposedCooks]);
+
   return (
-    <>
-      <div className="h-[95%] w-full flex flex-col items-center">
-        <div className=" relative h-[80%] w-[70%]  m-2 p-4 rounded flex flex-col justify-center ">
-          {loading && (
-            <div className="left-0 absolute w-full h-full bg-red-200/10 backdrop-blur-[2px] flex justify-center items-center">
-              <p className="p-2 bg-blue-200 rounded">...Loading</p>
-            </div>
+    <div className=" relative h-[80%] w-[50%] border border-violet-200 m-12 p-6 rounded flex flex-col justify-center ">
+      {loading && (
+        <div className="left-0 absolute w-full h-full bg-red-200/10 backdrop-blur-[2px] flex justify-center items-center">
+          <p className="p-2 bg-blue-200 rounded">...Loading</p>
+        </div>
+      )}
+      <div
+        ref={chatRef}
+        className="w-full flex flex-col h-[90%] overflow-y-auto hide-scrollbar"
+      >
+        {session &&
+          session.history.map((x, idx) =>
+            x.role == "system" ? null : (
+              <div
+                key={idx}
+                className={`p-2 m-2 rounded w-[80%] ${
+                  x.role == "user"
+                    ? "!bg-red-100 text-right ml-auto "
+                    : " !bg-blue-100 text-left"
+                } `}
+              >
+                <p>{x.content}</p>
+              </div>
+            )
           )}
-          <div
-            ref={chatRef}
-            className="w-full flex flex-col h-[90%] overflow-y-auto hide-scrollbar"
+        {session && session.proposedCooks && (
+          <Modal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+            }}
+            onFail={() => {
+              setFailText("You need to select a cook to proceed!!!");
+            }}
           >
-            {session &&
-              session.history
-                .filter((x) => x.role != "system") // filter out system messages
-                .slice(-2) // show only last 2 messages
-                .map((x, idx) =>
-                  x.role == "system" ? null : (
-                    <div
-                      key={idx}
-                      className={`p-2 m-2 rounded w-[80%] ${
-                        x.role == "user"
-                          ? "!bg-red-100 text-right ml-auto "
-                          : " !bg-blue-100 text-left"
-                      } `}
-                    >
-                      <p>{x.content}</p>
+            <div className="flex flex-col items-center text-center p-6">
+              <h2 className="text-xl font-bold mb-2">
+                These are the chefs available at the moment...
+              </h2>
+              <p className="text-red-500 font-semibold mb-6">
+                Which chef would you like to get in touch with?
+              </p>
+
+              <div className="flex justify-center gap-8">
+                {session.proposedCooks?.map((cook, i) => (
+                  <div
+                    key={i}
+                    className="group flex flex-col items-center cursor-pointer  hover:scale-105  transition-all"
+                    onClick={() => selectCook(cook.id)}
+                  >
+                    <div className="w-32 h-32 rounded-full flex items-center justify-center mb-3 group-hover:shadow-lg">
+                      <Image
+                        src={cook.avatar}
+                        alt={cook.name}
+                        width={128}
+                        height={128}
+                        className="rounded-full"
+                      />
                     </div>
-                  )
-                )}
-            {session &&
-              session.proposedCooks &&
-              session.proposedCooks.map((x, i) => (
-                <div
-                  onClick={() => selectCook(x.id)}
-                  key={i}
-                  className="cursor-pointer p-2 m-2 bg-red-200"
-                >
-                  <p>{x.name}</p>
+                    <p className="px-4 py-1 border-2 border-red-400 text-red-500 rounded-full font-medium group-hover:shadow-lg group-hover:text-red-700">
+                      {cook.name}
+                    </p>
+                    <div className="text-sm text-gray-500 mt-2 group-hover:visible invisible">
+                      <p>Origin: {cook.origin}</p>
+                      <p>Cuisine: {cook.cousine}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Show fail text if user tries to close modal without selecting a cook */}
+              {failText != "" && (
+                <div className=" visible">
+                  <h1 className="p-3 text-xl text-red-700">
+                    &#x1F90C; {failText} &#x1F90C;
+                  </h1>
                 </div>
-              ))}
-          </div>
-        </div>
-        <div className="h-[50%] w-[50%] bottom-1 items-center flex">
-          {!session?.proposedCooks && (
-            // show input only if cooks are not proposed outside the chat
-            <UserInput
-              sendMessage={sendMessage}
-              userInput={userInput}
-              setUserInput={setUserInput}
-            />
-          )}
-        </div>
+              )}
+            </div>
+          </Modal>
+        )}
       </div>
-    </>
+      {!session?.proposedCooks && (
+        <form
+          className={`w-full h-[10%] bg-violet-100 rounded w-[80%] flex justify-center items-center`}
+        >
+          <input
+            type="text"
+            disabled={session?.proposedCooks ? true : false}
+            value={userInput}
+            onChange={({ target }) => setUserInput(target.value)}
+            className="outline-none w-full h-full p-1 mx-2"
+            placeholder="type your message here"
+          />
+          <button
+            type="submit"
+            disabled={session?.proposedCooks ? true : false}
+            onClick={(e) => {
+              e.preventDefault();
+              sendMessage();
+            }}
+            className=" bg-violet-200 rounded p-2  h-10"
+          >
+            Send
+          </button>
+        </form>
+      )}
+    </div>
   );
 }

@@ -140,7 +140,7 @@ export const cooks: Cook[] = [
     ],
     avatar: "/images/avatars/cookPriya.png",
   },
-  {
+  /*{
     id: "11",
     name: "Sofia Greenleaf",
     origin: "Portland",
@@ -217,7 +217,7 @@ export const cooks: Cook[] = [
       "Calculates everything but doesn't understand food emotions",
     ],
     avatar: "/images/avatars/cookAI.png",
-  },
+  },*/
 ];
 
 /*
