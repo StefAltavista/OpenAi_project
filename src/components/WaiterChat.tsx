@@ -83,6 +83,9 @@ export default function WaiterChat({
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Show fail text if user tries to close modal without selecting a cook
+  const [failText, setFailText] = useState("");
+
   useEffect(() => {
     if (session?.proposedCooks) {
       setIsModalOpen(true);
@@ -121,6 +124,9 @@ export default function WaiterChat({
             onClose={() => {
               setIsModalOpen(false);
             }}
+            onFail={() => {
+              setFailText("You need to select a cook to proceed!!!");
+            }}
           >
             <div className="flex flex-col items-center text-center p-6">
               <h2 className="text-xl font-bold mb-2">
@@ -156,6 +162,12 @@ export default function WaiterChat({
                   </div>
                 ))}
               </div>
+              {/* Show fail text if user tries to close modal without selecting a cook */}
+              {failText != "" && (
+                <div className=" visible">
+                  <h1 className="p-3 text-xl text-red-700">{failText}</h1>
+                </div>
+              )}
             </div>
           </Modal>
         )}
