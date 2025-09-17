@@ -124,10 +124,10 @@ export default function WaiterChat({
           >
             <div className="flex flex-col items-center text-center p-6">
               <h2 className="text-xl font-bold mb-2">
-                Questi sono i cuochi al momento disponibili...
+                These are the chefs available at the moment...
               </h2>
               <p className="text-red-500 font-semibold mb-6">
-                Con quale chef vuoi che ti metta in contatto?
+                Which chef would you like to get in touch with?
               </p>
 
               <div className="flex justify-center gap-8">
