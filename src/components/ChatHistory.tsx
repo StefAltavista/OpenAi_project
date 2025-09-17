@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Cook } from "@/data/cooks";
 import { ChatHistoryMessages } from "@/components/ChatBox";
+import ChatMessage from "@/components/ChatMessage";
 
 type ChatHistoryProps = {
   history: ChatHistoryMessages[],
@@ -27,18 +28,7 @@ export default function ChatHistory(chatHistoryProps: ChatHistoryProps) {
     >
       {
         chatHistoryProps.history.map((x, idx) =>
-          x.role == "system" ? null : (
-            <div
-              key={idx}
-              className={`p-2 m-2 rounded w-[80%] ${
-                x.role == "user"
-                  ? "!bg-red-100 text-right ml-auto "
-                  : " !bg-blue-100 text-left"
-              }`}
-            >
-              <p>{x.content}</p>
-            </div>
-          )
+          <ChatMessage key={idx} content={x.content} role={x.role}/>
         )
       }
       {
