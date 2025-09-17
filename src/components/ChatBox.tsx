@@ -5,22 +5,31 @@ import { Session } from "@/lib/switchWaiterState";
 import useInitSession from "@/hooks/useInitSession";
 import InputChatBox from "@/components/InputChatBox";
 import ChatHistory from "@/components/ChatHistory";
-import { getInitialWaiterValue, sendWaiterMessage } from "@/lib/waiterApiClient";
+import {
+  getInitialWaiterValue,
+  sendWaiterMessage,
+} from "@/lib/waiterApiClient";
 import { getInitialCookValue, sendCookMessage } from "@/lib/cookApiClient";
 import { CookSession } from "@/lib/switchCookState";
 import sessionStep from "@/lib/sessionStep";
+import Modal from "./Modal";
+import Image from "next/image";
 
 export default function ChatBox() {
-  const [waiterSession, setWaiterSession] = useState<Session>(getInitialWaiterValue());
-  const [cookSession, setCookSession] = useState<CookSession>(getInitialCookValue("", ""));
+  const [waiterSession, setWaiterSession] = useState<Session>(
+    getInitialWaiterValue()
+  );
+  const [cookSession, setCookSession] = useState<CookSession>(
+    getInitialCookValue("", "")
+  );
   const [recipe, setRecipe] = useState("");
   const [cookChat, setCookChat] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistoryMessages[]>([]);
 
-  const { sessionInit, error } = useInitSession(
-    waiterSession,
-    "api/waiter"
-  );
+  const { sessionInit, error } = useInitSession(waiterSession, "api/waiter");
+
+  // Modal Cook's choice state
+  const [isCookModalOpen, setIsCookModalOpen] = useState(false);
 
   useEffect(() => {
     if (sessionInit && !error) {
@@ -30,23 +39,33 @@ export default function ChatBox() {
   }, [sessionInit, error]);
 
   const addHistoryMessage = (message: ChatHistoryMessages): void => {
-    setChatHistory(prev => [...prev, message]);
-  }
+    setChatHistory((prev) => [...prev, message]);
+  };
 
   const sendMessage = async (input: string) => {
     const userInput = { role: "user", content: input };
     addHistoryMessage(userInput);
 
-    let returnedSession = null
+    let returnedSession = null;
 
     if (!cookChat) {
-      returnedSession = await sendWaiterMessage(input, waiterSession, setWaiterSession);
+      returnedSession = await sendWaiterMessage(
+        input,
+        waiterSession,
+        setWaiterSession
+      );
     } else if (cookChat && cookSession.cookID.trim() !== "") {
-      returnedSession = await sendCookMessage(input, cookSession, setCookSession)
+      returnedSession = await sendCookMessage(
+        input,
+        cookSession,
+        setCookSession
+      );
     }
 
     if (returnedSession != null) {
-      addHistoryMessage(returnedSession.history[returnedSession.history.length - 1]);
+      addHistoryMessage(
+        returnedSession.history[returnedSession.history.length - 1]
+      );
     }
 
     console.log("DEBUG: sendMessage.returnedSession", returnedSession);
@@ -58,20 +77,33 @@ export default function ChatBox() {
     }
   }, [waiterSession]);
 
-
   const selectCook = async (cookID: string) => {
     const initialCookSession = getInitialCookValue(cookID, recipe);
     setCookSession(initialCookSession);
     const returnedSession = await sessionStep(initialCookSession, "api/cook");
     console.log("DEBUG: cook Session", returnedSession);
-    waiterSession.proposedCooks = undefined; // TODO: proporre i cuochi e avvisare della selezione
-    addHistoryMessage(returnedSession.history[returnedSession.history.length - 1]);
+    // TODO: proporre i cuochi e avvisare della selezione
+    setWaiterSession((prev) => ({ ...prev, proposedCooks: undefined }));
+    addHistoryMessage(
+      returnedSession.history[returnedSession.history.length - 1]
+    );
     setCookChat(true);
+    console.log(setCookChat);
   };
 
-  const backToWaiter = async () => {
+  useEffect(() => {
+    if (
+      waiterSession?.proposedCooks &&
+      waiterSession.proposedCooks.length > 0
+    ) {
+      setIsCookModalOpen(true);
+    }
+  }, [waiterSession?.proposedCooks]);
 
-  }
+  // Show fail text if user tries to close modal without selecting a cook
+  const [failText, setFailText] = useState("");
+
+  const backToWaiter = async () => {};
 
   return (
     <div
@@ -85,24 +117,84 @@ export default function ChatBox() {
         flex
         flex-col
         justify-center
-      ">
-
+      "
+    >
       <ChatHistory
         history={chatHistory ? chatHistory : []}
-
-        // TODO: proposing cooks should open a modal
-        proposedCooks={waiterSession?.proposedCooks ? waiterSession.proposedCooks : []}
+        proposedCooks={
+          waiterSession?.proposedCooks ? waiterSession.proposedCooks : []
+        }
         selectCookFunc={selectCook}
       />
 
+      {isCookModalOpen && (
+        <Modal
+          isOpen={isCookModalOpen}
+          onClose={() => {
+            setIsCookModalOpen(false);
+          }}
+          onFail={() => {
+            setFailText("You need to select a cook to proceed!!!");
+          }}
+        >
+          <div className="flex flex-col items-center text-center p-6">
+            <h2 className="text-xl font-bold mb-2">
+              These are the chefs available at the moment...
+            </h2>
+            <p className="text-red-500 font-semibold mb-6">
+              Which chef would you like to get in touch with?
+            </p>
+
+            <div className="flex justify-center gap-8">
+              {waiterSession?.proposedCooks &&
+                waiterSession.proposedCooks.map((cook, i) => (
+                  <div
+                    key={i}
+                    className="group flex flex-col items-center cursor-pointer  hover:scale-105  transition-all"
+                    onClick={() => {
+                      selectCook(cook.id);
+                      setIsCookModalOpen(false);
+                    }}
+                  >
+                    <div className="w-32 h-32 rounded-full flex items-center justify-center mb-3 group-hover:shadow-lg">
+                      <Image
+                        src={cook.avatar}
+                        alt={cook.name}
+                        width={128}
+                        height={128}
+                        className="rounded-full"
+                      />
+                    </div>
+                    <p className="px-4 py-1 border-2 border-red-400 text-red-500 rounded-full font-medium group-hover:shadow-lg group-hover:text-red-700">
+                      {cook.name}
+                    </p>
+                    <div className="text-sm text-gray-500 mt-2 group-hover:visible invisible">
+                      <p>Origin: {cook.origin}</p>
+                      <p>Cuisine: {cook.cousine}</p>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            {/* Show fail text if user tries to close modal without selecting a cook */}
+            {failText != "" && (
+              <div className=" visible">
+                <h1 className="p-3 text-xl text-red-700">
+                  &#x1F90C; {failText} &#x1F90C;
+                </h1>
+              </div>
+            )}
+          </div>
+        </Modal>
+      )}
+
       {!waiterSession?.proposedCooks && (
-        <InputChatBox sendMessage={sendMessage}/>
+        <InputChatBox sendMessage={sendMessage} />
       )}
     </div>
   );
 }
 
 export interface ChatHistoryMessages {
-  role: string,
-  content: string,
+  role: string;
+  content: string;
 }
