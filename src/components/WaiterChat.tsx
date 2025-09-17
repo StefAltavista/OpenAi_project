@@ -165,7 +165,9 @@ export default function WaiterChat({
               {/* Show fail text if user tries to close modal without selecting a cook */}
               {failText != "" && (
                 <div className=" visible">
-                  <h1 className="p-3 text-xl text-red-700">{failText}</h1>
+                  <h1 className="p-3 text-xl text-red-700">
+                    &#x1F90C; {failText} &#x1F90C;
+                  </h1>
                 </div>
               )}
             </div>
