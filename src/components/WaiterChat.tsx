@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Session } from "@/lib/switchWaiterState";
 import sessionStep from "@/lib/sessionStep";
 import useInitSession from "@/hooks/useInitSession";
+import Modal from "./Modal";
+import Image from "next/image";
 
 export default function WaiterChat({
   setIsCook,
@@ -66,6 +68,7 @@ export default function WaiterChat({
     }
   }, [session]);
 
+  // Select cook from modal
   const selectCook = async (cookID: string) => {
     setLoading(true);
     newSession = { ...session, selectedCookId: cookID };
@@ -74,7 +77,18 @@ export default function WaiterChat({
     setIsCook(true);
     setCookID(cookID);
     setLoading(false);
+    setIsModalOpen(false); // Close modal after selecting a cook
   };
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (session?.proposedCooks) {
+      setIsModalOpen(true);
+    }
+  }, [session?.proposedCooks]);
+
   return (
     <div className=" relative h-[80%] w-[50%] border border-violet-200 m-12 p-6 rounded flex flex-col justify-center ">
       {loading && (
@@ -101,17 +115,46 @@ export default function WaiterChat({
               </div>
             )
           )}
-        {session &&
-          session.proposedCooks &&
-          session.proposedCooks.map((x, i) => (
-            <div
-              onClick={() => selectCook(x.id)}
-              key={i}
-              className="cursor-pointer p-2 m-2 bg-red-200"
-            >
-              <p>{x.name}</p>
+        {session && session.proposedCooks && (
+          <Modal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+            }}
+          >
+            <div className="flex flex-col items-center text-center p-6">
+              <h2 className="text-xl font-bold mb-2">
+                Questi sono i cuochi al momento disponibili...
+              </h2>
+              <p className="text-red-500 font-semibold mb-6">
+                Con quale chef vuoi che ti metta in contatto?
+              </p>
+
+              <div className="flex justify-center gap-8">
+                {session.proposedCooks?.map((cook, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col items-center cursor-pointer"
+                    onClick={() => selectCook(cook.id)}
+                  >
+                    <div className="w-32 h-32 rounded-full flex items-center justify-center mb-3">
+                      <Image
+                        src={cook.avatar}
+                        alt={cook.name}
+                        width={128}
+                        height={128}
+                        className="rounded-full"
+                      />
+                    </div>
+                    <p className="px-4 py-1 border-2 border-red-400 text-red-500 rounded-full font-medium">
+                      {cook.name}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+          </Modal>
+        )}
       </div>
       {!session?.proposedCooks && (
         <form
