@@ -15,6 +15,7 @@ import sessionStep from "@/lib/sessionStep";
 import Modal from "./Modal";
 import Image from "next/image";
 
+// Unifed chatbox with interaction user -> waiter and then user -> chef selected
 export default function ChatBox() {
   const [waiterSession, setWaiterSession] = useState<Session>(
     getInitialWaiterValue()
@@ -54,18 +55,28 @@ export default function ChatBox() {
         waiterSession,
         setWaiterSession
       );
+      if (returnedSession != null) {
+        addHistoryMessage(
+          returnedSession.history[returnedSession.history.length - 1]
+        );
+      }
     } else if (cookChat && cookSession.cookID.trim() !== "") {
       returnedSession = await sendCookMessage(
         input,
         cookSession,
         setCookSession
       );
-    }
+      if (returnedSession != null) {
+        addHistoryMessage({
+          ...returnedSession.history[returnedSession.history.length - 1],
+          id: cookSession.cookID,
+          cookStep: cookSession.step,
+        });
+      }
 
-    if (returnedSession != null) {
-      addHistoryMessage(
-        returnedSession.history[returnedSession.history.length - 1]
-      );
+      if (cookSession.step === "RETURN_TO_WAITER") {
+        setCookChat(false);
+      }
     }
 
     console.log("DEBUG: sendMessage.returnedSession", returnedSession);
@@ -79,16 +90,26 @@ export default function ChatBox() {
 
   const selectCook = async (cookID: string) => {
     const initialCookSession = getInitialCookValue(cookID, recipe);
+
     setCookSession(initialCookSession);
+
     const returnedSession = await sessionStep(initialCookSession, "api/cook");
     console.log("DEBUG: cook Session", returnedSession);
-    // TODO: proporre i cuochi e avvisare della selezione
+
     setWaiterSession((prev) => ({ ...prev, proposedCooks: undefined }));
-    addHistoryMessage(
-      returnedSession.history[returnedSession.history.length - 1]
-    );
+
+    if (returnedSession && returnedSession.history.length > 0) {
+      const lastMessage =
+        returnedSession.history[returnedSession.history.length - 1];
+      addHistoryMessage({
+        ...lastMessage,
+        id: cookID,
+      });
+    }
+
     setCookChat(true);
-    console.log(setCookChat);
+
+    return cookID;
   };
 
   useEffect(() => {
@@ -103,7 +124,7 @@ export default function ChatBox() {
   // Show fail text if user tries to close modal without selecting a cook
   const [failText, setFailText] = useState("");
 
-  const backToWaiter = async () => {};
+  //const backToWaiter = async () => {};
 
   return (
     <div
@@ -119,13 +140,17 @@ export default function ChatBox() {
         justify-center
       "
     >
-      <ChatHistory
-        history={chatHistory ? chatHistory : []}
-        proposedCooks={
-          waiterSession?.proposedCooks ? waiterSession.proposedCooks : []
-        }
-        selectCookFunc={selectCook}
-      />
+      {!cookChat && (
+        <>
+          <ChatHistory
+            history={chatHistory ? chatHistory : []}
+            proposedCooks={
+              waiterSession?.proposedCooks ? waiterSession.proposedCooks : []
+            }
+            selectCookFunc={selectCook}
+          />
+        </>
+      )}
 
       {isCookModalOpen && (
         <Modal
@@ -151,8 +176,9 @@ export default function ChatBox() {
                   <div
                     key={i}
                     className="group flex flex-col items-center cursor-pointer  hover:scale-105  transition-all"
-                    onClick={() => {
-                      selectCook(cook.id);
+                    onClick={async () => {
+                      const id = await selectCook(cook.id);
+                      console.log("Hai selezionato:", id);
                       setIsCookModalOpen(false);
                     }}
                   >
@@ -187,6 +213,12 @@ export default function ChatBox() {
         </Modal>
       )}
 
+      {cookChat && (
+        <>
+          <ChatHistory history={chatHistory ? chatHistory : []} />
+        </>
+      )}
+
       {!waiterSession?.proposedCooks && (
         <InputChatBox sendMessage={sendMessage} />
       )}
@@ -197,4 +229,6 @@ export default function ChatBox() {
 export interface ChatHistoryMessages {
   role: string;
   content: string;
+  id?: string;
+  cookStep?: CookSession["step"];
 }

@@ -32,8 +32,8 @@ export default async function switchCookState(
     // Initial greeting and asking about diet
     case "SALUTE":
       session.history.push({
-        role: "system",
-        content: `Say Hello to our guest, make a silly comment about the recipe and ask if the user is on a specific diet`,
+        role: "cook",
+        content: `Talk in italian: Say Hello to our guest, make a silly comment about the recipe and ask if the user is on a specific diet`,
       });
       session.step = "ASK_ALLERGY";
       return session;

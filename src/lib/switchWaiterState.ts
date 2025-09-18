@@ -29,7 +29,7 @@ export async function switchWaiterState(session: Session) {
       session.history.push({
         role: "system",
         content:
-          " You are a digital Waiter in an app that provides recipes upon request. Greet and welcome the user  to our App Restaurant called SummerCamp Bistrò.",
+          "Talk in italian: You are a digital Waiter in an app that provides recipes upon request. Greet and welcome the user  to our App Restaurant called SummerCamp Bistrò.",
       });
       session.step = "ASK_RECIPE";
       return session;
@@ -59,7 +59,9 @@ export async function switchWaiterState(session: Session) {
       const cooks_proposition = getRandomCooks(session.usedCooksID || []);
       session.history.push({
         role: "system",
-        content: `Be joyfull about the recipe they asked about, ask him to choose one of the proposed cooks`,
+        content: `Give a wierd feedback about the choice the user made, the choise was ${cooks.find(
+          (c) => c.id == session.selectedCookId
+        )} say goodbye and handoff to the cook to give the recipe`,
       });
       session.step = "COOK_SELECTED";
       session.proposedCooks = cooks_proposition;
@@ -67,12 +69,6 @@ export async function switchWaiterState(session: Session) {
 
     // Handling the cook selection and handing off to the cook
     case "COOK_SELECTED":
-      session.history.push({
-        role: "system",
-        content: `Give a wierd feedback about the choice the user made, the choise was ${cooks.find(
-          (c) => c.id == session.selectedCookId
-        )} say goodbye and handoff to the cook to give the recipe`,
-      });
       if (!session.selectedCookId) return;
       session.usedCooksID?.push({ id: session.selectedCookId });
       session.proposedCooks = undefined;
