@@ -132,8 +132,7 @@ export default function ChatBox() {
         relative h-[90dvh]
         lg:w-5/6
         mx-auto
-        border
-        border-violet-200
+        
         p-6 rounded
         flex
         flex-col
