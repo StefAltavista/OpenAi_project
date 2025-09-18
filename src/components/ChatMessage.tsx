@@ -9,6 +9,7 @@ type ChatMessageProps = {
   step?: CookSession["step"];
 };
 
+// Receive detail of interaction from user to Waiter or from user to Cook
 export default function ChatMessage({
   content,
   role,
@@ -22,11 +23,13 @@ export default function ChatMessage({
   let messageBg = "";
   let alignClass = "";
 
+  // Branch user
   if (role === "user") {
     avatarSrc = "/avatars/user.png";
     altText = "user";
     messageBg = "bg-red-100 text-right ml-auto";
     alignClass = "flex-row-reverse";
+    // Branch Cook
   } else if (role === "cook" && id) {
     const selectedCook = cooks.find((cook) => cook.id === id);
     if (!selectedCook) return null;
@@ -34,7 +37,7 @@ export default function ChatMessage({
     altText = selectedCook.name;
     messageBg = "bg-green-100 text-left";
   } else {
-    // waiter
+    // Branch waiter
     avatarSrc = "/avatars/waiterAi.png";
     altText = "waiter";
     messageBg = "bg-blue-100 text-left";

@@ -49,12 +49,14 @@ export default function ChatBox() {
 
     let returnedSession = null;
 
+    // If cookChat hasn't start yet returnedSession began with waiterSession
     if (!cookChat) {
       returnedSession = await sendWaiterMessage(
         input,
         waiterSession,
         setWaiterSession
       );
+
       if (returnedSession != null) {
         addHistoryMessage(
           returnedSession.history[returnedSession.history.length - 1]
@@ -74,6 +76,7 @@ export default function ChatBox() {
         });
       }
 
+      // TODO: return Session to Waiter
       if (cookSession.step === "RETURN_TO_WAITER") {
         setCookChat(false);
       }
@@ -82,12 +85,14 @@ export default function ChatBox() {
     console.log("DEBUG: sendMessage.returnedSession", returnedSession);
   };
 
+  // TODO: Recipe doesn't show nothing on frontend
   useEffect(() => {
     if (waiterSession?.recipe) {
       setRecipe(waiterSession.recipe);
     }
   }, [waiterSession]);
 
+  // Selection of chef by passing cookID
   const selectCook = async (cookID: string) => {
     const initialCookSession = getInitialCookValue(cookID, recipe);
 
@@ -112,6 +117,7 @@ export default function ChatBox() {
     return cookID;
   };
 
+  // If proposedCook exist open Modal
   useEffect(() => {
     if (
       waiterSession?.proposedCooks &&
@@ -139,6 +145,7 @@ export default function ChatBox() {
         justify-center
       "
     >
+      {/* Chat with waiter */}
       {!cookChat && (
         <>
           <ChatHistory
@@ -151,6 +158,7 @@ export default function ChatBox() {
         </>
       )}
 
+      {/* Modal window for chef's choice */}
       {isCookModalOpen && (
         <Modal
           isOpen={isCookModalOpen}
@@ -212,6 +220,7 @@ export default function ChatBox() {
         </Modal>
       )}
 
+      {/* Chat with chef/cook */}
       {cookChat && (
         <>
           <ChatHistory history={chatHistory ? chatHistory : []} />
