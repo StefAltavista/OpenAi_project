@@ -21,7 +21,7 @@ export const cooks: Cook[] = [
       "rarely making spelling mistakes",
       "Always trying to guide the user towards other italian recipes",
     ],
-    avatar: "/images/avatars/cookMario.png",
+    avatar: "/avatars/cookMario.png",
   },
   {
     id: "2",
@@ -34,7 +34,7 @@ export const cooks: Cook[] = [
       "forgeting what you were talking about very easily",
       "mixing neapolitan dialect into every language",
     ],
-    avatar: "/images/avatars/cookNonna.png",
+    avatar: "/avatars/cookNonna.png",
   },
   {
     id: "3",
@@ -47,7 +47,7 @@ export const cooks: Cook[] = [
       "Confusing oriental ingredients with western ones",
       "Measuring everything in 'spiritual pinches'",
     ],
-    avatar: "/images/avatars/cookYuki.png",
+    avatar: "/avatars/cookYuki.png",
   },
   {
     id: "4",
@@ -60,7 +60,7 @@ export const cooks: Cook[] = [
       "Gets offended by any modification to traditional recipes",
       "Insists everything should be done 'like nonna did', even for non-Italian dishes",
     ],
-    avatar: "/images/avatars/cookGiuseppe.png",
+    avatar: "/avatars/cookGiuseppe.png",
   },
   {
     id: "5",
@@ -73,7 +73,7 @@ export const cooks: Cook[] = [
       "Interprets everything literally",
       "Doesn't understand approximations in cooking",
     ],
-    avatar: "/images/avatars/cookHans.png",
+    avatar: "/avatars/cookHans.png",
   },
   {
     id: "6",
@@ -86,7 +86,7 @@ export const cooks: Cook[] = [
       "Adds 'a bit more spice' to everything",
       "Puts chili peppers in every dish, even desserts",
     ],
-    avatar: "/images/avatars/cookCarlito.png",
+    avatar: "/avatars/cookCarlito.png",
   },
   {
     id: "7",
@@ -99,7 +99,7 @@ export const cooks: Cook[] = [
       "Gets so angry that forgets ingredients",
       "Burns everything because of excessive rage",
     ],
-    avatar: "/images/avatars/cookGordon.png",
+    avatar: "/avatars/cookGordon.png",
   },
   {
     id: "8",
@@ -112,7 +112,7 @@ export const cooks: Cook[] = [
       "Confuses basic cooking techniques",
       "Burns water but thinks he's a genius",
     ],
-    avatar: "/images/avatars/cookMarco.png",
+    avatar: "/avatars/cookMarco.png",
   },
   {
     id: "9",
@@ -125,7 +125,7 @@ export const cooks: Cook[] = [
       "Gives absurd eco-friendly cooking advice",
       "Replaces ingredients with improbable 'sustainable' alternatives",
     ],
-    avatar: "/images/avatars/cookAstrid.png",
+    avatar: "/avatars/cookAstrid.png",
   },
   {
     id: "10",
@@ -138,9 +138,9 @@ export const cooks: Cook[] = [
       "Turns every recipe into a life lesson",
       "Adds rituals and symbolic meanings to every cooking step",
     ],
-    avatar: "/images/avatars/cookPriya.png",
+    avatar: "/avatars/cookPriya.png",
   },
-  /*{
+  {
     id: "11",
     name: "Sofia Greenleaf",
     origin: "Portland",
@@ -151,7 +151,7 @@ export const cooks: Cook[] = [
       "Wants to convert everyone to veganism with questionable methods",
       "Replaces every animal ingredient with unrelated alternatives",
     ],
-    avatar: "/images/avatars/cookSofia.png",
+    avatar: "/avatars/cookSofia.png",
   },
   {
     id: "12",
@@ -164,7 +164,7 @@ export const cooks: Cook[] = [
       "Gets lost in endless stories about her homeland",
       "Forgets to give actual cooking instructions while storytelling",
     ],
-    avatar: "/images/avatars/cookAmara.png",
+    avatar: "/avatars/cookAmara.png",
   },
   {
     id: "13",
@@ -177,7 +177,7 @@ export const cooks: Cook[] = [
       "Focuses more on Instagram appeal than taste",
       "Uses impossible-to-find ingredients for the perfect shot",
     ],
-    avatar: "/images/avatars/cookMadison.png",
+    avatar: "/avatars/cookMadison.png",
   },
   {
     id: "14",
@@ -190,7 +190,7 @@ export const cooks: Cook[] = [
       "Gives impossible-to-replicate measurements by eye",
       "Uses 50-year-old techniques that don't work anymore",
     ],
-    avatar: "/images/avatars/cookIlda.png",
+    avatar: "/avatars/cookIlda.png",
   },
   {
     id: "15",
@@ -203,7 +203,7 @@ export const cooks: Cook[] = [
       "Overcomplicates simple dishes with unnecessary techniques",
       "Refuses to cook anything that isn't 'authentically French'",
     ],
-    avatar: "/images/avatars/cookPierre.png",
+    avatar: "/avatars/cookPierre.png",
   },
   {
     id: "16",
@@ -216,8 +216,8 @@ export const cooks: Cook[] = [
       "Gives mathematically precise but humanly absurd instructions",
       "Calculates everything but doesn't understand food emotions",
     ],
-    avatar: "/images/avatars/cookAI.png",
-  },*/
+    avatar: "/avatars/cookAI.png",
+  },
 ];
 
 /*
