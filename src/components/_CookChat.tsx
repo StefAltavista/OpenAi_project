@@ -6,7 +6,7 @@ import { CookSession } from "@/lib/switchCookState";
 import { useEffect, useRef, useState } from "react";
 import InputChatBox from "@/components/InputChatBox";
 
-export default function CookChat({
+export default function _CookChat({
   cookID,
   recipe,
   setAllergies,
