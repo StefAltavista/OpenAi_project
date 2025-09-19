@@ -115,10 +115,6 @@ export default function ChatBox() {
     >
       <ChatHistory
         history={chatHistory ? chatHistory : []}
-        proposedCooks={
-          waiterSession?.proposedCooks ? waiterSession.proposedCooks : []
-        }
-        selectCookFunc={selectCook}
       />
 
       <InputChatBox sendMessage={sendMessage}/>
