@@ -68,18 +68,15 @@ export default function ChatBox() {
         cookSession,
         setCookSession
       );
+      // Need to update this history to feed interaction with cook
       if (returnedSession != null) {
         addHistoryMessage({
           ...returnedSession.history[returnedSession.history.length - 1],
           id: cookSession.cookID,
-          cookStep: cookSession.step,
         });
       }
 
       // TODO: return Session to Waiter
-      if (cookSession.step === "RETURN_TO_WAITER") {
-        setCookChat(false);
-      }
     }
 
     console.log("DEBUG: sendMessage.returnedSession", returnedSession);
@@ -238,5 +235,4 @@ export interface ChatHistoryMessages {
   role: string;
   content: string;
   id?: string;
-  cookStep?: CookSession["step"];
 }

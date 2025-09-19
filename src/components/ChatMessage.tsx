@@ -1,21 +1,14 @@
 import { cooks } from "@/data/cooks";
 import Image from "next/image";
-import { CookSession } from "@/lib/switchCookState";
 
 type ChatMessageProps = {
   content: string;
   role: string;
   id?: string;
-  step?: CookSession["step"];
 };
 
 // Receive detail of interaction from user to Waiter or from user to Cook
-export default function ChatMessage({
-  content,
-  role,
-  id,
-  step,
-}: ChatMessageProps) {
+export default function ChatMessage({ content, role, id }: ChatMessageProps) {
   if (role === "system") return null;
 
   let avatarSrc = "";
@@ -53,9 +46,7 @@ export default function ChatMessage({
         className="rounded-full"
       />
       <div className={`p-2 m-2 rounded w-[80%] max-w-xs ${messageBg}`}>
-        <p>
-          {role} - {content} - {step}
-        </p>
+        <p>{content}</p>
       </div>
     </div>
   );

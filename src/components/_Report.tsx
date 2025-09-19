@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export default function Report({
+export default function _Report({
   recipe,
   diet,
   allergies,
@@ -11,7 +11,8 @@ export default function Report({
   allergies: string[] | null;
   ingredients: string[] | null;
 }) {
-  useEffect(() => {});
+  useEffect(() => {
+  });
 
   return (
     <div className="mt-12 flex flex-col">
