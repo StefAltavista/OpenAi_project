@@ -1,11 +1,16 @@
 interface ModalProps {
   isOpen: boolean;
-  onClose?: () => void;
+  onClose: () => void;
   onFail: () => void;
   children: React.ReactNode;
 }
 
-export default function Modal({ isOpen, onFail, children }: ModalProps) {
+export default function Modal({
+  isOpen,
+  onClose,
+  onFail,
+  children,
+}: ModalProps) {
   if (!isOpen) return null;
 
   return (

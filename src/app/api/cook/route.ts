@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       );
       if (getIngredientsList.finalOutput) {
         newSession.history.push({
-          role: "cook",
+          role: "assistant",
           content: JSON.parse(getIngredientsList.finalOutput).message,
         });
         newSession.ingredients = JSON.parse(
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     } else if (!result.finalOutput) return;
     else
       newSession.history.push({
-        role: "cook",
+        role: "assistant",
         content: result.finalOutput,
       });
 
