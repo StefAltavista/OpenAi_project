@@ -5,8 +5,8 @@ import ChatMessage from "@/components/ChatMessage";
 
 type ChatHistoryProps = {
   history: ChatHistoryMessages[];
-  proposedCooks: Cook[];
-  selectCookFunc: (cookId: string) => void;
+  proposedCooks?: Cook[];
+  selectCookFunc?: (cookId: string) => Promise<string>;
 };
 
 export default function ChatHistory(chatHistoryProps: ChatHistoryProps) {
@@ -27,17 +27,8 @@ export default function ChatHistory(chatHistoryProps: ChatHistoryProps) {
       className="w-full flex flex-col h-[90%] overflow-y-auto hide-scrollbar"
     >
       {chatHistoryProps.history.map((x, idx) => (
-        <ChatMessage key={idx} content={x.content} role={x.role} />
+        <ChatMessage key={idx} content={x.content} role={x.role} id={x.id} />
       ))}
-      {/*chatHistoryProps.proposedCooks.map((x, i) => (
-        <div
-          onClick={() => chatHistoryProps.selectCookFunc(x.id)}
-          key={i}
-          className="cursor-pointer p-2 m-2 bg-red-200"
-        >
-          <p>{x.name}</p>
-        </div>
-      ))*/}
     </div>
   );
 }
