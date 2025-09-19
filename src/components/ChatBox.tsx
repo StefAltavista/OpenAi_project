@@ -3,33 +3,28 @@
 import { useEffect, useState } from "react";
 import { Session } from "@/lib/switchWaiterState";
 import useInitSession from "@/hooks/useInitSession";
-import InputChatBox from "@/components/InputChatBox";
 import ChatHistory from "@/components/ChatHistory";
-import {
-  getInitialWaiterValue,
-  sendWaiterMessage,
-} from "@/lib/waiterApiClient";
+import { getInitialWaiterValue, sendWaiterMessage, } from "@/lib/waiterApiClient";
 import { getInitialCookValue, sendCookMessage } from "@/lib/cookApiClient";
 import { CookSession } from "@/lib/switchCookState";
 import sessionStep from "@/lib/sessionStep";
 import Modal from "./Modal";
 import Image from "next/image";
+import InputChatBox from "@/components/InputChatBox";
 
 export default function ChatBox() {
-  const [waiterSession, setWaiterSession] = useState<Session>(
-    getInitialWaiterValue()
-  );
-  const [cookSession, setCookSession] = useState<CookSession>(
-    getInitialCookValue("", "")
-  );
+  const [waiterSession, setWaiterSession] = useState<Session>(getInitialWaiterValue());
+  const [cookSession, setCookSession] = useState<CookSession>(getInitialCookValue("", ""));
   const [recipe, setRecipe] = useState("");
   const [cookChat, setCookChat] = useState(false);
+
   const [chatHistory, setChatHistory] = useState<ChatHistoryMessages[]>([]);
 
-  const { sessionInit, error } = useInitSession(waiterSession, "api/waiter");
-
-  // Modal Cook's choice state
+  // Modal variables
   const [isCookModalOpen, setIsCookModalOpen] = useState(false);
+  const [failText, setFailText] = useState("");
+
+  const { sessionInit, error } = useInitSession(waiterSession, "api/waiter");
 
   useEffect(() => {
     if (sessionInit && !error) {
@@ -48,35 +43,23 @@ export default function ChatBox() {
 
     let returnedSession = null;
 
-    // If cookChat hasn't start yet returnedSession began with waiterSession
     if (!cookChat) {
-      returnedSession = await sendWaiterMessage(
-        input,
-        waiterSession,
-        setWaiterSession
-      );
+      returnedSession = await sendWaiterMessage(input, waiterSession, setWaiterSession);
 
       if (returnedSession != null) {
-        addHistoryMessage(
-          returnedSession.history[returnedSession.history.length - 1]
-        );
+        addHistoryMessage(returnedSession.history[returnedSession.history.length - 1]);
       }
+
     } else if (cookChat && cookSession.cookID.trim() !== "") {
-      returnedSession = await sendCookMessage(
-        input,
-        cookSession,
-        setCookSession
-      );
-      // Need to update this history to feed interaction with cook
+      returnedSession = await sendCookMessage(input, cookSession, setCookSession);
+
       if (returnedSession != null) {
-        addHistoryMessage({
-          ...returnedSession.history[returnedSession.history.length - 1],
-          id: cookSession.cookID,
-        });
+        addHistoryMessage({ ...returnedSession.history[returnedSession.history.length - 1], id: cookSession.cookID, });
       }
 
-      // TODO: return Session to Waiter
     }
+
+    // TODO: return Session to Waiter
 
     console.log("DEBUG: sendMessage.returnedSession", returnedSession);
   };
@@ -100,12 +83,8 @@ export default function ChatBox() {
     setWaiterSession((prev) => ({ ...prev, proposedCooks: undefined }));
 
     if (returnedSession && returnedSession.history.length > 0) {
-      const lastMessage =
-        returnedSession.history[returnedSession.history.length - 1];
-      addHistoryMessage({
-        ...lastMessage,
-        id: cookID,
-      });
+      const lastMessage = returnedSession.history[returnedSession.history.length - 1];
+      addHistoryMessage({ ...lastMessage, id: cookID, });
     }
 
     setCookChat(true);
@@ -115,18 +94,10 @@ export default function ChatBox() {
 
   // If proposedCook exist open Modal
   useEffect(() => {
-    if (
-      waiterSession?.proposedCooks &&
-      waiterSession.proposedCooks.length > 0
-    ) {
+    if (waiterSession?.proposedCooks && waiterSession.proposedCooks.length > 0) {
       setIsCookModalOpen(true);
     }
   }, [waiterSession?.proposedCooks]);
-
-  // Show fail text if user tries to close modal without selecting a cook
-  const [failText, setFailText] = useState("");
-
-  //const backToWaiter = async () => {};
 
   return (
     <div
@@ -142,20 +113,16 @@ export default function ChatBox() {
         justify-center
       "
     >
-      {/* Chat with waiter */}
-      {!cookChat && (
-        <>
-          <ChatHistory
-            history={chatHistory ? chatHistory : []}
-            proposedCooks={
-              waiterSession?.proposedCooks ? waiterSession.proposedCooks : []
-            }
-            selectCookFunc={selectCook}
-          />
-        </>
-      )}
+      <ChatHistory
+        history={chatHistory ? chatHistory : []}
+        proposedCooks={
+          waiterSession?.proposedCooks ? waiterSession.proposedCooks : []
+        }
+        selectCookFunc={selectCook}
+      />
 
-      {/* Modal window for chef's choice */}
+      <InputChatBox sendMessage={sendMessage}/>
+
       {isCookModalOpen && (
         <Modal
           isOpen={isCookModalOpen}
@@ -195,7 +162,8 @@ export default function ChatBox() {
                         className="rounded-full"
                       />
                     </div>
-                    <p className="px-4 py-1 border-2 border-red-400 text-red-500 rounded-full font-medium group-hover:shadow-lg group-hover:text-red-700">
+                    <p
+                      className="px-4 py-1 border-2 border-red-400 text-red-500 rounded-full font-medium group-hover:shadow-lg group-hover:text-red-700">
                       {cook.name}
                     </p>
                     <div className="text-sm text-gray-500 mt-2 group-hover:visible invisible">
@@ -217,16 +185,6 @@ export default function ChatBox() {
         </Modal>
       )}
 
-      {/* Chat with chef/cook */}
-      {cookChat && (
-        <>
-          <ChatHistory history={chatHistory ? chatHistory : []} />
-        </>
-      )}
-
-      {!waiterSession?.proposedCooks && (
-        <InputChatBox sendMessage={sendMessage} />
-      )}
     </div>
   );
 }
