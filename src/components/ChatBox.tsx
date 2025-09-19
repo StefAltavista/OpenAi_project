@@ -48,35 +48,47 @@ export default function ChatBox() {
 
     let returnedSession = null;
 
+    // If cookChat hasn't start yet returnedSession began with waiterSession
     if (!cookChat) {
       returnedSession = await sendWaiterMessage(
         input,
         waiterSession,
         setWaiterSession
       );
+
+      if (returnedSession != null) {
+        addHistoryMessage(
+          returnedSession.history[returnedSession.history.length - 1]
+        );
+      }
     } else if (cookChat && cookSession.cookID.trim() !== "") {
       returnedSession = await sendCookMessage(
         input,
         cookSession,
         setCookSession
       );
-    }
+      // Need to update this history to feed interaction with cook
+      if (returnedSession != null) {
+        addHistoryMessage({
+          ...returnedSession.history[returnedSession.history.length - 1],
+          id: cookSession.cookID,
+        });
+      }
 
-    if (returnedSession != null) {
-      addHistoryMessage(
-        returnedSession.history[returnedSession.history.length - 1]
-      );
+      // TODO: return Session to Waiter
     }
 
     console.log("DEBUG: sendMessage.returnedSession", returnedSession);
   };
 
+  // TODO: Recipe doesn't show nothing on frontend
   useEffect(() => {
     if (waiterSession?.recipe) {
       setRecipe(waiterSession.recipe);
     }
   }, [waiterSession]);
 
+  // Selection of chef by passing cookID
   const selectCook = async (cookID: string) => {
     const initialCookSession = getInitialCookValue(cookID, recipe);
 
@@ -85,7 +97,7 @@ export default function ChatBox() {
     const returnedSession = await sessionStep(initialCookSession, "api/cook");
     console.log("DEBUG: cook Session", returnedSession);
 
-    waiterSession.proposedCooks = undefined; // TODO: proporre i cuochi e avvisare della selezione
+    setWaiterSession((prev) => ({ ...prev, proposedCooks: undefined }));
 
     if (returnedSession && returnedSession.history.length > 0) {
       const lastMessage =
