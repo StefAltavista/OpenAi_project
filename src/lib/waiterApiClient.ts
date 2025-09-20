@@ -28,11 +28,3 @@ export const sendWaiterMessage = async (
   setSession(returnedSession);
   return returnedSession;
 };
-
-export const selectCookMessage = async (cookID: string, session: Session, setSession: Dispatch<SetStateAction<Session>>) => {
-  if (!session) return;
-
-  const newSession: Session = { ...session, selectedCookId: cookID };
-  const returnedSession = await sessionStep(newSession, "/api/waiter");
-  setSession(returnedSession);
-};

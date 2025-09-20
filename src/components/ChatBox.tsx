@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Session } from "@/lib/switchWaiterState";
+import { Session, WaiterState } from "@/lib/switchWaiterState";
 import useInitSession from "@/hooks/useInitSession";
 import ChatHistory from "@/components/ChatHistory";
 import { getInitialWaiterValue, sendWaiterMessage, } from "@/lib/waiterApiClient";
-import { getInitialCookValue, sendCookMessage } from "@/lib/cookApiClient";
+import { getInitialCookValue, initCookSession, sendCookMessage } from "@/lib/cookApiClient";
 import { CookSession } from "@/lib/switchCookState";
-import sessionStep from "@/lib/sessionStep";
 import Modal from "./Modal";
 import Image from "next/image";
 import InputChatBox from "@/components/InputChatBox";
@@ -58,10 +57,6 @@ export default function ChatBox() {
       }
 
     }
-
-    // TODO: return Session to Waiter
-
-    console.log("DEBUG: sendMessage.returnedSession", returnedSession);
   };
 
   // TODO: Recipe doesn't show nothing on frontend
@@ -71,16 +66,27 @@ export default function ChatBox() {
     }
   }, [waiterSession]);
 
-  // Selection of chef by passing cookID
-  const selectCook = async (cookID: string) => {
-    const initialCookSession = getInitialCookValue(cookID, recipe);
+  useEffect(() => {
+    if (cookSession.step === 'RETURN_TO_WAITER') {
+      setCookChat(false);
+      setCookSession(getInitialCookValue("", ""));
 
-    setCookSession(initialCookSession);
+      (async () => {
+        waiterSession.step = "RETURN_TO_WAITER" as WaiterState;
+        let returnedSession = null;
+        returnedSession = await sendWaiterMessage(" ", waiterSession, setWaiterSession);
+        if (returnedSession != null) {
+          addHistoryMessage(returnedSession.history[returnedSession.history.length - 1]);
+        }
+      })();
+    }
+  }, [cookSession.step]);
 
-    const returnedSession = await sessionStep(initialCookSession, "api/cook");
-    console.log("DEBUG: cook Session", returnedSession);
+  const startCookCommunication = async (cookID: string) => {
+    const returnedSession = await initCookSession(cookID, recipe, setCookSession);
 
     setWaiterSession((prev) => ({ ...prev, proposedCooks: undefined }));
+    setWaiterSession((prev) => ({ ...prev, usedCooksID: [...(prev.usedCooksID ?? []), { id: cookID }], }));
 
     if (returnedSession && returnedSession.history.length > 0) {
       const lastMessage = returnedSession.history[returnedSession.history.length - 1];
@@ -144,7 +150,7 @@ export default function ChatBox() {
                     key={i}
                     className="group flex flex-col items-center cursor-pointer  hover:scale-105  transition-all"
                     onClick={async () => {
-                      const id = await selectCook(cook.id);
+                      const id = await startCookCommunication(cook.id);
                       console.log("Hai selezionato:", id);
                       setIsCookModalOpen(false);
                     }}

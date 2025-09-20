@@ -12,6 +12,18 @@ export function getInitialCookValue(cookID: string, recipe: string): CookSession
   };
 }
 
+export const initCookSession = async (
+  cookID: string,
+  recipe: string,
+  setSession: Dispatch<SetStateAction<CookSession>>
+) => {
+  const initialCookSession = getInitialCookValue(cookID, recipe);
+  const returnedSession = await sessionStep(initialCookSession, "api/cook");
+
+  setSession(returnedSession);
+  return returnedSession;
+}
+
 export const sendCookMessage = async (
   input: string,
   session: CookSession,
