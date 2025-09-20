@@ -24,7 +24,7 @@ export default function ChatHistory({ history }: ChatHistoryProps) {
       className="w-full flex flex-col h-[90%] overflow-y-auto hide-scrollbar"
     >
       {history.map((x, idx) => (
-        <ChatMessage key={idx} content={x.content} role={x.role} id={x.id}/>
+        <ChatMessage key={idx} content={x.content} role={x.role} id={x.id} />
       ))}
     </div>
   );
