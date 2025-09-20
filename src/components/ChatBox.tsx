@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { Session } from "@/lib/switchWaiterState";
 import useInitSession from "@/hooks/useInitSession";
 import ChatHistory from "@/components/ChatHistory";
-import { getInitialWaiterValue, sendWaiterMessage, } from "@/lib/waiterApiClient";
+import {
+  getInitialWaiterValue,
+  sendWaiterMessage,
+} from "@/lib/waiterApiClient";
 import { getInitialCookValue, sendCookMessage } from "@/lib/cookApiClient";
 import { CookSession } from "@/lib/switchCookState";
 import sessionStep from "@/lib/sessionStep";
@@ -13,8 +16,12 @@ import Image from "next/image";
 import InputChatBox from "@/components/InputChatBox";
 
 export default function ChatBox() {
-  const [waiterSession, setWaiterSession] = useState<Session>(getInitialWaiterValue());
-  const [cookSession, setCookSession] = useState<CookSession>(getInitialCookValue("", ""));
+  const [waiterSession, setWaiterSession] = useState<Session>(
+    getInitialWaiterValue()
+  );
+  const [cookSession, setCookSession] = useState<CookSession>(
+    getInitialCookValue("", "")
+  );
   const [recipe, setRecipe] = useState("");
   const [cookChat, setCookChat] = useState(false);
 
@@ -44,19 +51,31 @@ export default function ChatBox() {
     let returnedSession = null;
 
     if (!cookChat) {
-      returnedSession = await sendWaiterMessage(input, waiterSession, setWaiterSession);
+      returnedSession = await sendWaiterMessage(
+        input,
+        waiterSession,
+        setWaiterSession
+      );
 
       if (returnedSession != null) {
-        addHistoryMessage(returnedSession.history[returnedSession.history.length - 1]);
+        /* addHistoryMessage(
+          returnedSession.history[returnedSession.history.length - 1]
+        ); */
+        setChatHistory(returnedSession.history);
       }
-
     } else if (cookChat && cookSession.cookID.trim() !== "") {
-      returnedSession = await sendCookMessage(input, cookSession, setCookSession);
+      returnedSession = await sendCookMessage(
+        input,
+        cookSession,
+        setCookSession
+      );
 
       if (returnedSession != null) {
-        addHistoryMessage({ ...returnedSession.history[returnedSession.history.length - 1], id: cookSession.cookID, });
+        addHistoryMessage({
+          ...returnedSession.history[returnedSession.history.length - 1],
+          id: cookSession.cookID,
+        });
       }
-
     }
 
     // TODO: return Session to Waiter
@@ -83,8 +102,9 @@ export default function ChatBox() {
     setWaiterSession((prev) => ({ ...prev, proposedCooks: undefined }));
 
     if (returnedSession && returnedSession.history.length > 0) {
-      const lastMessage = returnedSession.history[returnedSession.history.length - 1];
-      addHistoryMessage({ ...lastMessage, id: cookID, });
+      const lastMessage =
+        returnedSession.history[returnedSession.history.length - 1];
+      addHistoryMessage({ ...lastMessage, id: cookID });
     }
 
     setCookChat(true);
@@ -94,8 +114,15 @@ export default function ChatBox() {
 
   // If proposedCook exist open Modal
   useEffect(() => {
-    if (waiterSession?.proposedCooks && waiterSession.proposedCooks.length > 0) {
-      setIsCookModalOpen(true);
+    if (
+      waiterSession?.proposedCooks &&
+      waiterSession.proposedCooks.length > 0
+    ) {
+      const timeout = setTimeout(() => {
+        setIsCookModalOpen(true);
+      }, 4000);
+
+      return () => clearTimeout(timeout);
     }
   }, [waiterSession?.proposedCooks]);
 
@@ -113,11 +140,9 @@ export default function ChatBox() {
         justify-center
       "
     >
-      <ChatHistory
-        history={chatHistory ? chatHistory : []}
-      />
+      <ChatHistory history={chatHistory ? chatHistory : []} />
 
-      <InputChatBox sendMessage={sendMessage}/>
+      <InputChatBox sendMessage={sendMessage} />
 
       {isCookModalOpen && (
         <Modal
@@ -158,8 +183,7 @@ export default function ChatBox() {
                         className="rounded-full"
                       />
                     </div>
-                    <p
-                      className="px-4 py-1 border-2 border-red-400 text-red-500 rounded-full font-medium group-hover:shadow-lg group-hover:text-red-700">
+                    <p className="px-4 py-1 border-2 border-red-400 text-red-500 rounded-full font-medium group-hover:shadow-lg group-hover:text-red-700">
                       {cook.name}
                     </p>
                     <div className="text-sm text-gray-500 mt-2 group-hover:visible invisible">
@@ -180,7 +204,6 @@ export default function ChatBox() {
           </div>
         </Modal>
       )}
-
     </div>
   );
 }
