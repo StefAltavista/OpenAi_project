@@ -5,6 +5,7 @@ type ChatMessageProps = {
   content: string;
   role: string;
   id?: string;
+  onShowCookModal?: () => void;
 };
 
 // Receive detail of interaction from user to Waiter or from user to Cook
