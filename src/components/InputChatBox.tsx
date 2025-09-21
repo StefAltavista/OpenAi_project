@@ -15,24 +15,16 @@ export default function InputChatBox({
   return (
     <form
       className="
-        w-full
-        sm:w-4/5
-        xl:w-3/5
-        mx-auto
-        bg-white
-        rounded-2xl
-        flex
-        flex-col
-        border-3
-        mt-5
-        border-red-600"
+        input-container"
     >
       <input
         type="text"
         value={userInput}
         onChange={({ target }) => setUserInput(target.value)}
-        className="outline-none p-1 m-2 placeholder:truncate disabled:bg-gray-100 disabled:text-gray-400"
-        placeholder={disabled ? "⚠️ Wait a minute..." : "Enter your message..."}
+        className="input-field"
+        placeholder={
+          disabled ? "⚠️ Wait a minute..." : "Type your message here... 🍳"
+        }
         readOnly={disabled}
       />
       <button
@@ -44,7 +36,7 @@ export default function InputChatBox({
             setUserInput("");
           }
         }}
-        className={`rounded p-2 m-2 h-10 self-end flex items-center justify-center
+        className={`send-button
           ${
             disabled
               ? "bg-gray-300 cursor-not-allowed"

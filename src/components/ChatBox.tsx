@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Session, WaiterState } from "@/lib/switchWaiterState";
 import useInitSession from "@/hooks/useInitSession";
 import ChatHistory from "@/components/ChatHistory";
@@ -80,6 +80,24 @@ export default function ChatBox() {
   // Modal variables
   const [isCookModalOpen, setIsCookModalOpen] = useState(false);
   const [failText, setFailText] = useState("");
+
+  // Single scroll ref for the actual scrollable container
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  // Auto-scroll to bottom when chat history changes
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+
+    if (scrollContainer) {
+      setTimeout(() => {
+        scrollContainer.scrollTo({
+          top: scrollContainer.scrollHeight,
+
+          behavior: "smooth",
+        });
+      }, 100);
+    }
+  }, [chatHistory]);
 
   // useEffect management
   useEffect(() => {
@@ -162,20 +180,23 @@ export default function ChatBox() {
   }, [waiterSession?.proposedCooks]);
 
   return (
-    <div
-      className="
-        relative h-[90dvh]
-        lg:w-5/6
-        mx-auto
-        border
-        border-violet-200
-        p-6 rounded
-        flex
-        flex-col
-        justify-center
-      "
-    >
-      <ChatHistory history={chatHistory ? chatHistory : []} />
+    <div className="chat-container relative w-full max-w-5xl flex flex-col h-full p-6">
+      <div className="flex-1 min-h-0 flex flex-col">
+        <div ref={scrollRef} className="chat-scroll hide-scrollbar">
+          <ChatHistory history={chatHistory ? chatHistory : []} />
+        </div>
+
+        <div className="sticky bottom-0 pt-3 bg-transparent">
+          <InputChatBox
+            sendMessage={sendMessage}
+            disabled={
+              isSending ||
+              isCookModalOpen ||
+              (waiterSession?.proposedCooks?.length ?? 0) > 0
+            }
+          />
+        </div>
+      </div>
 
       {isSending && (
         <div className="flex items-center gap-2 text-gray-500 italic p-2">
@@ -186,15 +207,6 @@ export default function ChatBox() {
           </span>
         </div>
       )}
-
-      <InputChatBox
-        sendMessage={sendMessage}
-        disabled={
-          isSending ||
-          isCookModalOpen ||
-          (waiterSession?.proposedCooks?.length ?? 0) > 0
-        }
-      />
 
       {isCookModalOpen && waiterSession?.proposedCooks && (
         <CookSelectionModal

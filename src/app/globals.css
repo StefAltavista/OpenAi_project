@@ -11,7 +11,6 @@
   width: 0;
   height: 0;
 }
-*/
 
 /* Make a flex child actually shrink so its overflow works */
 .min-h-0 {
@@ -666,9 +665,6 @@ p {
   box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
 }
 
-.logo-emoji {
-}
-
 .logo-text {
   font-size: 24px;
   font-weight: 700;
@@ -712,7 +708,4 @@ p {
 
 .profile-svg {
   transition: all 0.3s ease;
-}
-
-.logo-image {
 }

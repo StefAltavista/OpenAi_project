@@ -14,14 +14,14 @@ export default function ChatMessage({ content, role, id }: ChatMessageProps) {
 
   let avatarSrc = "";
   let altText = "";
-  let messageBg = "";
+  let messageClasses = "";
   let alignClass = "";
 
   // Branch user
   if (role === "user") {
     avatarSrc = "/avatars/user.png";
     altText = "user";
-    messageBg = "bg-red-100 text-right ml-auto";
+    messageClasses = "message-user";
     alignClass = "flex-row-reverse";
     // Branch Cook
   } else if (role === "cook" && id) {
@@ -29,25 +29,33 @@ export default function ChatMessage({ content, role, id }: ChatMessageProps) {
     if (!selectedCook) return null;
     avatarSrc = selectedCook.avatar;
     altText = selectedCook.name;
-    messageBg = "bg-green-100 text-left";
+    messageClasses = "message-cook";
   } else {
     // Branch waiter
     avatarSrc = "/avatars/waiterAi.png";
     altText = "waiter";
-    messageBg = "bg-blue-100 text-left";
+    messageClasses = "message-waiter";
   }
 
+  const rowAlign =
+    role === "user" ? "flex-row-reverse items-start" : "items-start";
+
   return (
-    <div className={`flex items-start gap-2 mb-2 ${alignClass}`}>
-      <Image
-        src={avatarSrc}
-        alt={altText}
-        width={50}
-        height={50}
-        className="rounded-full"
-      />
-      <div className={`p-2 m-2 rounded w-[80%] max-w-xs ${messageBg}`}>
-        <p>{content}</p>
+    <div className={`flex gap-3 ${rowAlign}`}>
+      <div className="shrink-0 avatar-container">
+        <Image
+          src={avatarSrc}
+          alt={altText}
+          width={80}
+          height={80}
+          className="rounded-full object-cover align-middle"
+        />
+      </div>
+
+      <div className={`${messageClasses} max-w-[70%] self-start`}>
+        <p className="font-medium leading-relaxed whitespace-pre-wrap">
+          {content}
+        </p>
       </div>
     </div>
   );
