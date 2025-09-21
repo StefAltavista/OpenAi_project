@@ -33,7 +33,7 @@ export default async function switchCookState(
     case "SALUTE":
       session.history.push({
         role: "cook",
-        content: `Talk in italian: Say Hello to our guest, make a silly comment about the recipe and ask if the user is on a specific diet`,
+        content: `Say Hello to our guest, make a silly comment about the recipe and ask if the user is on a specific diet`,
       });
       session.step = "ASK_ALLERGY";
       return session;

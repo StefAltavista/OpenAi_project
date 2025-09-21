@@ -181,8 +181,8 @@ export default function ChatBox() {
         <div className="flex items-center gap-2 text-gray-500 italic p-2">
           <span>
             {cookChat
-              ? "👨‍🍳 Il cuoco sta pensando..."
-              : "🤵 Il cameriere sta pensando..."}
+              ? "👨‍🍳 The cook is thinking..."
+              : "🤵 The waiter is thinking..."}
           </span>
         </div>
       )}
