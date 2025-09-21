@@ -18,9 +18,13 @@ import CookSelectionModal from "./CookSelectionModal";
 import InputChatBox from "@/components/InputChatBox";
 
 export default function ChatBox() {
+  // useState management -> WaiterSession, CookSession, recipe, cookChat, ChatHistory and isSending(user message sending)
   const [waiterSession, setWaiterSession] = useState<Session>(
     getInitialWaiterValue()
   );
+
+  const { sessionInit, error } = useInitSession(waiterSession, "api/waiter");
+
   const [cookSession, setCookSession] = useState<CookSession>(
     getInitialCookValue("", "")
   );
@@ -29,12 +33,55 @@ export default function ChatBox() {
 
   const [chatHistory, setChatHistory] = useState<ChatHistoryMessages[]>([]);
 
+  const [isSending, setIsSending] = useState(false); // user message state of sending to api, it should prevent spam from user
+
+  const sendMessage = async (input: string) => {
+    if (isSending) return;
+    setIsSending(true);
+
+    const userInput = { role: "user", content: input };
+    addHistoryMessage(userInput);
+
+    let returnedSession = null;
+
+    try {
+      if (!cookChat) {
+        returnedSession = await sendWaiterMessage(
+          input,
+          waiterSession,
+          setWaiterSession
+        );
+
+        if (returnedSession != null) {
+          /* addHistoryMessage(
+          returnedSession.history[returnedSession.history.length - 1]
+        ); */
+          setChatHistory(returnedSession.history);
+        }
+      } else if (cookChat && cookSession.cookID.trim() !== "") {
+        returnedSession = await sendCookMessage(
+          input,
+          cookSession,
+          setCookSession
+        );
+
+        if (returnedSession != null) {
+          addHistoryMessage({
+            ...returnedSession.history[returnedSession.history.length - 1],
+            id: cookSession.cookID,
+          });
+        }
+      }
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   // Modal variables
   const [isCookModalOpen, setIsCookModalOpen] = useState(false);
   const [failText, setFailText] = useState("");
 
-  const { sessionInit, error } = useInitSession(waiterSession, "api/waiter");
-
+  // useEffect management
   useEffect(() => {
     if (sessionInit && !error) {
       setWaiterSession(sessionInit);
@@ -46,41 +93,6 @@ export default function ChatBox() {
     setChatHistory((prev) => [...prev, message]);
   };
 
-  const sendMessage = async (input: string) => {
-    const userInput = { role: "user", content: input };
-    addHistoryMessage(userInput);
-
-    let returnedSession = null;
-
-    if (!cookChat) {
-      returnedSession = await sendWaiterMessage(
-        input,
-        waiterSession,
-        setWaiterSession
-      );
-
-      if (returnedSession != null) {
-        /* addHistoryMessage(
-          returnedSession.history[returnedSession.history.length - 1]
-        ); */
-        setChatHistory(returnedSession.history);
-      }
-    } else if (cookChat && cookSession.cookID.trim() !== "") {
-      returnedSession = await sendCookMessage(
-        input,
-        cookSession,
-        setCookSession
-      );
-
-      if (returnedSession != null) {
-        addHistoryMessage({
-          ...returnedSession.history[returnedSession.history.length - 1],
-          id: cookSession.cookID,
-        });
-      }
-    }
-  };
-
   // TODO: Recipe doesn't show nothing on frontend
   useEffect(() => {
     if (waiterSession?.recipe) {
@@ -88,6 +100,7 @@ export default function ChatBox() {
     }
   }, [waiterSession]);
 
+  // Return to waiter from cookChat finished
   useEffect(() => {
     if (cookSession.step === "RETURN_TO_WAITER") {
       setCookChat(false);
@@ -164,7 +177,24 @@ export default function ChatBox() {
     >
       <ChatHistory history={chatHistory ? chatHistory : []} />
 
-      <InputChatBox sendMessage={sendMessage} />
+      {isSending && (
+        <div className="flex items-center gap-2 text-gray-500 italic p-2">
+          <span>
+            {cookChat
+              ? "👨‍🍳 Il cuoco sta pensando..."
+              : "🤵 Il cameriere sta pensando..."}
+          </span>
+        </div>
+      )}
+
+      <InputChatBox
+        sendMessage={sendMessage}
+        disabled={
+          isSending ||
+          isCookModalOpen ||
+          (waiterSession?.proposedCooks?.length ?? 0) > 0
+        }
+      />
 
       {isCookModalOpen && waiterSession?.proposedCooks && (
         <CookSelectionModal
