@@ -11,3 +11,708 @@
   width: 0;
   height: 0;
 }
+*/
+
+/* Make a flex child actually shrink so its overflow works */
+.min-h-0 {
+  min-height: 0 !important;
+}
+
+/* The dedicated scroll node for chat history */
+.chat-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  /* reuse your pretty scrollbar */
+  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-red-light) transparent;
+}
+.chat-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 107, 107, 0.05);
+  border-radius: 10px;
+}
+.chat-scroll::-webkit-scrollbar-thumb {
+  background: var(--primary-red-light);
+  border-radius: 10px;
+}
+.chat-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-red);
+}
+
+/* Make sure the container allows children to shrink */
+.chat-container {
+  /* keep your existing styles … */
+  min-height: 0; /* <-- important in flex stacks */
+}
+
+/* Custom CSS Variables - Updated to match mockup */
+:root {
+  --primary-red: #ff6b6b;
+  --primary-red-light: #ffa8a8;
+  --primary-red-dark: #ff5252;
+  /*--secondary-blue: #4dabf7;*/
+  --secondary-blue: #dde8ff;
+  --secondary-green: #51cf66;
+  --accent-violet: #9775fa;
+  --neutral-warm: #f8f9fa;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --gradient-bg: linear-gradient(135deg, #fff5f5 0%, #fef2f2 20%);
+}
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  background-image: var(--gradient-bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 30%;
+  left: 2%;
+  width: 16vw;
+  height: 16vh;
+  background: url("/images/stars.png");
+  background-size: cover;
+  background-position: left center;
+  background-repeat: no-repeat;
+  z-index: -10;
+  pointer-events: none;
+}
+body::after {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 82%;
+  width: 16vw;
+  height: 16vh;
+  background: url("/images/stars.png");
+  background-size: cover;
+  background-position: left center;
+  background-repeat: no-repeat;
+  z-index: -10;
+  pointer-events: none;
+}
+
+/* Header & Footer Enhancement */
+.header-footer {
+  background: var(--primary-red);
+  color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.footer-link {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: white;
+}
+
+/* Main Chat Container */
+.chat-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 107, 107, 0.2);
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  max-width: 1200px;
+  height: 80dvh;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 85%;
+  padding-top: 24px;
+}
+
+.chat-container:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(255, 107, 107, 0.3);
+}
+
+/* Chat History Scrollbar */
+.hide-scrollbar {
+  overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-red-light) transparent;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.hide-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 107, 107, 0.05);
+  border-radius: 10px;
+}
+
+.hide-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--primary-red-light);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.hide-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-red);
+}
+
+/* Message Bubbles - Updated with proper padding and colors */
+.message-user {
+  background: var(--primary-red);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 20px 20px 6px 20px;
+  box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
+  animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 60%;
+  word-wrap: break-word;
+  margin-top: 20px !important;
+}
+
+.message-waiter {
+  background: white;
+  color: var(--text-primary);
+  border: 2px solid #e9ecef;
+  padding: 12px 18px;
+  border-radius: 20px 20px 20px 6px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  animation: slideInLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 60%;
+  word-wrap: break-word;
+  /*margin-top: 20px!important;*/
+}
+
+.message-cook {
+  background: var(--secondary-blue);
+  color: black;
+  padding: 12px 18px;
+  border-radius: 20px 20px 20px 6px;
+  box-shadow: 0 3px 10px rgba(81, 127, 207, 0.3);
+  animation: slideInLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 60%;
+  word-wrap: break-word;
+  /*margin-top: 20px!important;*/
+}
+
+/* Avatar Enhancements */
+.avatar-container {
+  position: relative;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  margin-left: 20px;
+}
+
+.avatar-container:hover {
+  transform: scale(1.05);
+}
+
+.avatar-container::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--primary-red), var(--accent-violet));
+  border-radius: 50%;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.avatar-container:hover::after {
+  opacity: 1;
+}
+
+/* Input Box Styling - Updated width to 80% */
+.input-container {
+  background: white;
+  border: 2px solid var(--primary-red);
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  width: 80%;
+  margin: 20px auto 0;
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  height: 80px;
+}
+
+.input-container:focus-within {
+  border-color: var(--primary-red-dark);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.2);
+  transform: translateY(-2px);
+}
+
+.input-field {
+  outline: none;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  color: var(--text-primary);
+  padding: 16px 20px;
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
+.input-field::placeholder {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.send-button {
+  background: var(--primary-red);
+  border: none;
+  border-radius: 16px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  padding: 12px;
+  margin: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.send-button:hover {
+  transform: scale(1.05);
+  background: var(--primary-red-dark);
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.3);
+}
+
+.send-button:active {
+  transform: scale(0.98);
+}
+
+/* Modal Styling */
+.modal-box {
+  padding-top: 30px;
+  padding-bottom: 10px;
+}
+.modal-overlay {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.2);
+  transition: opacity 0.2s ease-in-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  transform: translateY(0px) scale(1);
+  transition: transform 0.2s ease-out;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+/* Cook Selection Cards - Fixed centering and visibility */
+.cook-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid #f1f3f4;
+  cursor: pointer;
+  position: relative;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 200px;
+}
+
+.cook-card-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.cook-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--primary-red-light);
+  box-shadow: 0 20px 40px rgba(255, 107, 107, 0.15);
+}
+
+.cook-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid var(--primary-red-light);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cook-card:hover .cook-avatar {
+  border-color: var(--primary-red);
+  transform: scale(1.1);
+}
+
+.cook-name {
+  background: var(--primary-red);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  margin-bottom: 16px;
+}
+
+.cook-card:hover .cook-name {
+  background: white;
+  color: var(--primary-red);
+  border-color: var(--primary-red);
+  transform: scale(1.05);
+}
+
+/* Cook Details - Fixed visibility */
+.cook-details {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.cook-card:hover .cook-details {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cook-detail-item {
+  margin-bottom: 4px;
+}
+
+.cook-detail-label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Error/Fail Message */
+.fail-message {
+  background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+  border: 2px solid var(--primary-red-light);
+  border-radius: 16px;
+  padding: 16px 24px;
+  color: var(--primary-red-dark);
+  font-weight: 600;
+  animation: shake 0.5s ease-in-out;
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.1);
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Animations - Simplified */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Loading States */
+.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .chat-container {
+    border-radius: 16px;
+    margin: 10px;
+  }
+
+  .modal-content {
+    border-radius: 16px;
+    margin: 20px;
+  }
+
+  .cook-card {
+    margin-bottom: 16px;
+    min-width: 160px;
+  }
+
+  .cook-avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .input-container {
+    width: 95%;
+  }
+}
+
+/* Utility Classes */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-red), var(--accent-violet));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Focus Styles for Accessibility */
+.focusable:focus {
+  outline: 2px solid var(--primary-red);
+  outline-offset: 2px;
+}
+
+/* Typography Improvements */
+h1,
+h2,
+h3 {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+p {
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+/* Button Base Styles */
+.btn-primary {
+  background: var(--primary-red);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  background: var(--primary-red-dark);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+}
+
+/* App Header */
+.app-header {
+  background: white;
+  border-bottom: 1px solid rgba(255, 107, 107, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  height: 100px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  position: relative;
+  z-index: 100;
+}
+
+.header-content {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.logo-container:hover {
+  background: rgba(255, 107, 107, 0.05);
+  transform: translateY(-1px);
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(
+    135deg,
+    var(--primary-red),
+    var(--primary-red-dark)
+  );
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  transition: all 0.3s ease;
+}
+
+.logo-container:hover .logo-icon {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+}
+
+.logo-emoji {
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-red-dark);
+  letter-spacing: -0.5px;
+}
+
+.header-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-profile {
+  display: flex;
+  align-items: center;
+}
+
+.profile-icon {
+  width: 44px;
+  height: 44px;
+  background: white;
+  border: 2px solid #f1f3f4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text-secondary);
+}
+
+.profile-icon:hover {
+  border-color: var(--primary-red-light);
+  background: rgba(255, 107, 107, 0.05);
+  color: var(--primary-red);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.15);
+}
+
+.profile-svg {
+  transition: all 0.3s ease;
+}
+
+.logo-image {
+}
