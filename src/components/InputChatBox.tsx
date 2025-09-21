@@ -33,7 +33,7 @@ export default function InputChatBox({
         onChange={({ target }) => setUserInput(target.value)}
         className="outline-none p-1 m-2 placeholder:truncate disabled:bg-gray-100 disabled:text-gray-400"
         placeholder={disabled ? "⚠️ Wait a minute..." : "Enter your message..."}
-        disabled={disabled}
+        readOnly={disabled}
       />
       <button
         type="submit"
