@@ -62,7 +62,7 @@
   --text-secondary: #6c757d;
   --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.15);
-  --gradient-bg: linear-gradient(135deg, #fff5f5 0%, #fef2f2 20%);
+  --gradient-bg: linear-gradient(0deg, #ffffff, #fef2f2);
 }
 
 /* Global Styles */
