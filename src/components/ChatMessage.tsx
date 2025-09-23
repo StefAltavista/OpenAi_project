@@ -22,6 +22,7 @@ export default function ChatMessage({ content, role, id }: ChatMessageProps) {
     avatarSrc = "/avatars/user.png";
     altText = "user";
     messageClasses = "message-user";
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     alignClass = "flex-row-reverse";
     // Branch Cook
   } else if (role === "cook" && id) {

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+/*import { useEffect } from "react";
 
 export default function _Report({
   recipe,
@@ -51,3 +51,4 @@ export default function _Report({
     </div>
   );
 }
+*/

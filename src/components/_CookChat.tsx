@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 
 import useInitSession from "@/hooks/useInitSession";
 import sessionStep from "@/lib/sessionStep";
@@ -126,3 +126,4 @@ export default function _CookChat({
     </div>
   );
 }
+*/
