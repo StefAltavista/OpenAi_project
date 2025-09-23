@@ -3,15 +3,17 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
-import "./WaiterWaitingState.css";
-import Modal from "../Modal";
+import Modal from "./Modal";
 
+interface WaiterWaitingProps {
+  isOpen: boolean;
+}
 
-
-export default function WaiterWaitingState({isOpen: boolean}) {
+export default function WaiterWaitingState({ isOpen }: WaiterWaitingProps) {
   const [showLoader, setShowLoader] = useState(true);
   const waveRef = useRef<HTMLDivElement | null>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   // Timer solo per mostrare il loader
   useEffect(() => {
@@ -21,48 +23,48 @@ export default function WaiterWaitingState({isOpen: boolean}) {
 
   // Inizializza Wavesurfer quando il loader sparisce e il div è montato
   useEffect(() => {
-  if (!showLoader && waveRef.current) {
-    const ws = WaveSurfer.create({
-      container: waveRef.current,
-      waveColor: "#f66c76",
-      progressColor: "#d66fa3",
-      cursorColor: "#FF6B6B",
-      barWidth: 3,
-      barRadius: 2,
-      barGap: 1,
-      height: 100,
-      url: "/audio/call-error.wav",
-    });
+    if (!showLoader && waveRef.current) {
+      const ws = WaveSurfer.create({
+        container: waveRef.current,
+        waveColor: "#f66c76",
+        progressColor: "#d66fa3",
+        cursorColor: "#FF6B6B",
+        barWidth: 3,
+        barRadius: 2,
+        barGap: 1,
+        height: 100,
+        url: "/audio/call-error.wav",
+      });
 
-    wavesurfer.current = ws;
+      wavesurfer.current = ws;
 
-    let unmuteTimeout: NodeJS.Timeout;
+      let unmuteTimeout: NodeJS.Timeout;
 
-    ws.on("ready", () => {
-      console.log("Wavesurfer pronto, riproduco audio...");
+      ws.on("ready", () => {
+        console.log("Wavesurfer pronto, riproduco audio...");
 
-      ws.setMuted(true);
-      ws.play().catch(() => console.warn("Autoplay bloccato dal browser"));
+        ws.setMuted(true);
+        ws.play().catch(() => console.warn("Autoplay bloccato dal browser"));
 
-      unmuteTimeout = setTimeout(() => {
-        ws.setMuted(false);
-      }, 250);
-    });
+        unmuteTimeout = setTimeout(() => {
+          ws.setMuted(false);
+        }, 250);
+      });
 
-    ws.on("error", (e) => console.error("Errore Wavesurfer:", e));
+      ws.on("error", (e) => console.error("Errore Wavesurfer:", e));
 
-    return () => {
-      ws.destroy(); // pulisce Wavesurfer
-      clearTimeout(unmuteTimeout);
-  }
-}, [showLoader]);
+      ws.on("finish", () => setIsModalOpen(false));
+
+      return () => {
+        ws.destroy(); // pulisce Wavesurfer
+        clearTimeout(unmuteTimeout); // pulisce il setTimeout
+      };
+    }
+  }, [showLoader]);
 
   return (
-
     <>
-
-      <Modal>
-
+      <Modal isOpen={isOpen} onClose={() => isModalOpen}>
         <div className="flex flex-wrap justify-center gap-8 cook-card-container w-full">
           <div className="cook-avatar">
             <Image
@@ -90,16 +92,10 @@ export default function WaiterWaitingState({isOpen: boolean}) {
               <div></div>
             </div>
           ) : (
-          
             <div ref={waveRef} className="w-[300px] h-[100px]" />
-      
           )}
         </div>
-
       </Modal>
-   
     </>
-
   );
-
 }

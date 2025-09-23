@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { Session, WaiterState } from "@/lib/switchWaiterState";
 import useInitSession from "@/hooks/useInitSession";
 import ChatHistory from "@/components/ChatHistory";
-import WaiterWaitingState from "./WaiterWaitingStateComponent/WaiterWaitingState";
+import WaiterWaitingState from "@/components/WaiterWaitingState";
 import {
   getInitialWaiterValue,
   sendWaiterMessage,
@@ -15,7 +15,7 @@ import {
   sendCookMessage,
 } from "@/lib/cookApiClient";
 import { CookSession } from "@/lib/switchCookState";
-import CookSelectionModal from "./CookSelectionModal";
+import CookSelectionModal from "@/components/CookSelectionModal";
 import InputChatBox from "@/components/InputChatBox";
 
 export default function ChatBox() {
@@ -170,12 +170,10 @@ export default function ChatBox() {
   // Condizione affinchè la modale del cameriere si apre
 
   useEffect(() => {
-
-    if(cookSession.step === "RETURN_TO_WAITER") {
+    if (cookSession.step === "RETURN_TO_WAITER") {
       setIsWaiterModalOpen(true);
     }
-
-  },[cookSession.step])
+  }, [cookSession.step]);
 
   // If proposedCook exist open Modal
   useEffect(() => {
