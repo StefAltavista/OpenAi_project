@@ -1,7 +1,7 @@
 interface ModalProps {
   isOpen: boolean;
   onClose?: () => void;
-  onFail: () => void;
+  onFail?: () => void;
   children: React.ReactNode;
 }
 
