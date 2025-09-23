@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { Session, WaiterState } from "@/lib/switchWaiterState";
 import useInitSession from "@/hooks/useInitSession";
 import ChatHistory from "@/components/ChatHistory";
+import WaiterWaitingState from "./WaiterWaitingStateComponent/WaiterWaitingState";
 import {
   getInitialWaiterValue,
   sendWaiterMessage,
@@ -80,6 +81,7 @@ export default function ChatBox() {
   // Modal variables
   const [isCookModalOpen, setIsCookModalOpen] = useState(false);
   const [failText, setFailText] = useState("");
+  const [isWaiterModalOpen, setIsWaiterModalOpen] = useState(false);
 
   // Single scroll ref for the actual scrollable container
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -165,6 +167,16 @@ export default function ChatBox() {
     return cookID;
   };
 
+  // Condizione affinchè la modale del cameriere si apre
+
+  useEffect(() => {
+
+    if(cookSession.step === "RETURN_TO_WAITER") {
+      setIsWaiterModalOpen(true);
+    }
+
+  },[cookSession.step])
+
   // If proposedCook exist open Modal
   useEffect(() => {
     if (
@@ -195,6 +207,7 @@ export default function ChatBox() {
               (waiterSession?.proposedCooks?.length ?? 0) > 0
             }
           />
+          <WaiterWaitingState isOpen={isWaiterModalOpen}></WaiterWaitingState>
         </div>
       </div>
 
