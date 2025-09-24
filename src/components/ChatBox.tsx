@@ -167,8 +167,7 @@ export default function ChatBox() {
     return cookID;
   };
 
-  // Condizione affinchè la modale del cameriere si apre
-
+  // If cookSession is at the end WaiterWaitingModal will open
   useEffect(() => {
     if (cookSession.step === "RETURN_TO_WAITER") {
       setIsWaiterModalOpen(true);
@@ -205,7 +204,10 @@ export default function ChatBox() {
               (waiterSession?.proposedCooks?.length ?? 0) > 0
             }
           />
-          <WaiterWaitingState isOpen={isWaiterModalOpen}></WaiterWaitingState>
+          <WaiterWaitingState
+            isOpen={isWaiterModalOpen}
+            onClose={() => setIsWaiterModalOpen(false)}
+          ></WaiterWaitingState>
         </div>
       </div>
 

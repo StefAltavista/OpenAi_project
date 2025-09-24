@@ -5,36 +5,42 @@ import Modal from "./Modal";
 
 interface WaiterWaitingProps {
   isOpen: boolean;
+  onClose: () => void;
 }
 
-export default function WaiterWaitingState({ isOpen }: WaiterWaitingProps) {
+export default function WaiterWaitingState({
+  isOpen,
+  onClose,
+}: WaiterWaitingProps) {
   const [showLoader, setShowLoader] = useState(true);
-  const [audioStarted, setAudioStarted] = useState(false); // nuovo stato
+  //const [audioStarted, setAudioStarted] = useState(false); // nuovo stato
   const waveRef = useRef<HTMLDivElement | null>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(true);
 
-  // Timer solo per mostrare il loader
   useEffect(() => {
+    // Reset state
+    setShowLoader(true);
+
+    // Show loader for 8 seconds
     const timer = setTimeout(() => setShowLoader(false), 8000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isOpen]);
 
-  // Inizializza Wavesurfer quando l'utente clicca il pulsante
+  // Inizialize Wavesurfer when loader is finished
   useEffect(() => {
-    if (audioStarted && waveRef.current) {
+    if (isOpen && !showLoader && waveRef.current) {
       const ws = WaveSurfer.create({
         container: waveRef.current,
         waveColor: "#ffffff",
-        progressColor: "#ffffff",
+        progressColor: "#ff0000",
         cursorColor: "#ffffff",
         barWidth: 3,
         barRadius: 2,
         barGap: 1,
         fillParent: true,
         url: "/audio/call-error.wav",
-        autoplay: false, // parte solo dopo click
-        muted: true,     // inizialmente muto per evitare blocchi autoplay
+        autoplay: true,
+        //muted: true, // inizialmente muto per evitare blocchi autoplay
       });
 
       wavesurfer.current = ws;
@@ -51,18 +57,18 @@ export default function WaiterWaitingState({ isOpen }: WaiterWaitingProps) {
 
       ws.on("error", (e) => console.error("Errore Wavesurfer:", e));
 
-      ws.on("finish", () => setIsModalOpen(false));
+      ws.on("finish", () => onClose());
 
       return () => {
         ws.destroy();
         clearTimeout(unmuteTimeout);
       };
     }
-  }, [audioStarted]);
+  }, [isOpen, showLoader, onClose]);
 
   return (
     <>
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal isOpen={isOpen} onClose={onClose}>
         <div className="flex flex-wrap justify-center gap-8 cook-card-container w-full">
           <div className="cook-avatar">
             <Image
@@ -89,16 +95,19 @@ export default function WaiterWaitingState({ isOpen }: WaiterWaitingProps) {
               <div></div>
               <div></div>
               <div></div>
-            </div>
-          ) : !audioStarted ? (
+            </div> /* : !audioStarted ? (
             <button
               className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700 transition"
               onClick={() => setAudioStarted(true)}
             >
               Chiama cuoco
             </button>
+          )*/
           ) : (
-            <div ref={waveRef} className="w-[300px] h-[100px] gradient-background" />
+            <div
+              ref={waveRef}
+              className="w-[300px] h-[100px] gradient-background"
+            />
           )}
         </div>
       </Modal>
