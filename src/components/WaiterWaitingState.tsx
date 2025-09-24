@@ -57,12 +57,11 @@ export default function WaiterWaitingState({
 
       ws.on("error", (e) => console.error("Errore Wavesurfer:", e));
 
-      ws.on("finish", () => onClose());
-
-      return () => {
+      ws.on("finish", () => {
         ws.destroy();
         clearTimeout(unmuteTimeout);
-      };
+        onClose();
+      });
     }
   }, [isOpen, showLoader, onClose]);
 
@@ -78,24 +77,22 @@ export default function WaiterWaitingState({
               height={100}
             />
           </div>
-        </div>
+          <div className="flex flex-col items-center text-center p-8">
+            <h2 className="text-3xl font-bold mb-4 gradient-text">
+              Please, stay on the line!!!
+            </h2>
 
-        <div className="flex flex-col items-center text-center p-8">
-          <h2 className="text-3xl font-bold mb-4 gradient-text">
-            Please, stay on the line!!!
-          </h2>
+            <p className="text-red-600 font-semibold mb-8 text-lg">
+              I’ll get in touch with the chef you chose...
+            </p>
 
-          <p className="text-red-600 font-semibold mb-8 text-lg">
-            I’ll get in touch with the chef you chose...
-          </p>
-
-          {showLoader ? (
-            <div className="loadership_GRTSL">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div> /* : !audioStarted ? (
+            {showLoader ? (
+              <div className="loadership_GRTSL">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div> /* : !audioStarted ? (
             <button
               className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700 transition"
               onClick={() => setAudioStarted(true)}
@@ -103,12 +100,13 @@ export default function WaiterWaitingState({
               Chiama cuoco
             </button>
           )*/
-          ) : (
-            <div
-              ref={waveRef}
-              className="w-[300px] h-[100px] gradient-background"
-            />
-          )}
+            ) : (
+              <div
+                ref={waveRef}
+                className="w-[300px] h-[100px] gradient-background"
+              />
+            )}
+          </div>
         </div>
       </Modal>
     </>

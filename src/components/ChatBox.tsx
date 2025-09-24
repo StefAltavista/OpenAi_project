@@ -178,15 +178,16 @@ export default function ChatBox() {
   useEffect(() => {
     if (
       waiterSession?.proposedCooks &&
-      waiterSession.proposedCooks.length > 0
+      waiterSession.proposedCooks.length > 0 &&
+      !isWaiterModalOpen
     ) {
       const timeout = setTimeout(() => {
         setIsCookModalOpen(true);
-      }, 4000);
+      }, 5000);
 
       return () => clearTimeout(timeout);
     }
-  }, [waiterSession?.proposedCooks]);
+  }, [waiterSession?.proposedCooks, isWaiterModalOpen]);
 
   return (
     <div className="chat-container relative w-full max-w-5xl flex flex-col h-full p-6">
@@ -204,12 +205,13 @@ export default function ChatBox() {
               (waiterSession?.proposedCooks?.length ?? 0) > 0
             }
           />
-          <WaiterWaitingState
-            isOpen={isWaiterModalOpen}
-            onClose={() => setIsWaiterModalOpen(false)}
-          ></WaiterWaitingState>
         </div>
       </div>
+
+      <WaiterWaitingState
+        isOpen={isWaiterModalOpen}
+        onClose={() => setIsWaiterModalOpen(false)}
+      ></WaiterWaitingState>
 
       {isSending && (
         <div className="flex items-center gap-2 text-gray-500 italic p-2">
