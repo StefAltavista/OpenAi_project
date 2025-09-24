@@ -559,6 +559,12 @@ body::after {
   background-clip: text;
 }
 
+.gradient-background {
+  background: linear-gradient(90deg, #f66c76, #d66fa3);
+  border-radius: 8px; 
+  overflow: hidden; 
+}
+
 .glass-effect {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(10px);
