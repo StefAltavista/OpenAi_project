@@ -155,14 +155,15 @@ body::after {
   box-shadow: var(--shadow-soft);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   max-width: 1200px;
   height: 80dvh;
   display: flex;
   flex-direction: column;
   margin: 0 auto;
   width: 85%;
-  padding-top: 24px;
+  padding: 24px 18px!important;
+
 }
 
 .chat-container:hover {
@@ -208,7 +209,6 @@ body::after {
   animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   max-width: 60%;
   word-wrap: break-word;
-  margin-top: 20px !important;
 }
 
 .message-waiter {
@@ -241,7 +241,7 @@ body::after {
   position: relative;
   transition: transform 0.3s ease;
   flex-shrink: 0;
-  margin-left: 20px;
+  margin-left: 0px;
 }
 
 .avatar-container:hover {
@@ -251,15 +251,16 @@ body::after {
 .avatar-container::after {
   content: "";
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: linear-gradient(45deg, var(--primary-red), var(--accent-violet));
   border-radius: 50%;
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
+  transform: scale(0.95); /* Keeps it within the avatar bounds */
 }
 
 .avatar-container:hover::after {
@@ -534,6 +535,7 @@ body::after {
   .modal-content {
     border-radius: 16px;
     margin: 20px;
+    padding: 20px;
   }
 
   .cook-card {
@@ -541,14 +543,22 @@ body::after {
     min-width: 160px;
   }
 
-  .cook-avatar {
-    width: 100px;
-    height: 100px;
+  .input-container {
+    width: 100%;
+    margin-bottom: 10px;
   }
 
-  .input-container {
-    width: 95%;
+  .send-button {
+    width: 40px;
   }
+
+  .message-user{
+    margin-top: 5!important;
+  }
+  .message-waiter{
+    max-width: 90%!important;
+  }
+  
 }
 
 /* Utility Classes */
