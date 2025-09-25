@@ -23,17 +23,13 @@ export default function ChatBox() {
   const [waiterSession, setWaiterSession] = useState<Session>(
     getInitialWaiterValue()
   );
-
   const { sessionInit, error } = useInitSession(waiterSession, "api/waiter");
-
   const [cookSession, setCookSession] = useState<CookSession>(
     getInitialCookValue("", "")
   );
   const [recipe, setRecipe] = useState("");
   const [cookChat, setCookChat] = useState(false);
-
   const [chatHistory, setChatHistory] = useState<ChatHistoryMessages[]>([]);
-
   const [isSending, setIsSending] = useState(false); // user message state of sending to api, it should prevent spam from user
 
   const sendMessage = async (input: string) => {
@@ -169,10 +165,11 @@ export default function ChatBox() {
 
   // If cookSession is at the end WaiterWaitingModal will open
   useEffect(() => {
-    if (cookSession.step === "RETURN_TO_WAITER") {
+    console.log(waiterSession.step);
+    if (waiterSession.step === "COOK_SELECTED") {
       setIsWaiterModalOpen(true);
     }
-  }, [cookSession.step]);
+  }, [waiterSession]);
 
   // If proposedCook exist open Modal
   useEffect(() => {
@@ -211,7 +208,7 @@ export default function ChatBox() {
       <WaiterWaitingState
         isOpen={isWaiterModalOpen}
         onClose={() => setIsWaiterModalOpen(false)}
-      ></WaiterWaitingState>
+      />
 
       {isSending && (
         <div className="flex items-center gap-2 text-gray-500 italic p-2">
@@ -230,8 +227,9 @@ export default function ChatBox() {
           failText={failText}
           onFail={() => setFailText("You need to select a cook to proceed!!!")}
           onSelect={async (id) => {
-            await startCookCommunication(id);
             setIsCookModalOpen(false);
+            setIsWaiterModalOpen(true);
+            await startCookCommunication(id);
           }}
         />
       )}

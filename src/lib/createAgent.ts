@@ -19,7 +19,7 @@ export default function createCookAgent(cookID: string, recipe: string): Agent {
       " and "
     )} — but charmingly so.
     The user is asking you help prepare a ${recipe} but you are not being helpful...
-    Your answer are never longer than 35 words`;
+    Your answer are never longer than 25 words`;
 
   return new Agent({ name: cook.name, instructions });
 }

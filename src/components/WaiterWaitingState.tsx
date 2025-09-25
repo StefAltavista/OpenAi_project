@@ -22,7 +22,10 @@ export default function WaiterWaitingState({
     setShowLoader(true);
 
     // Show loader for 8 seconds
-    const timer = setTimeout(() => setShowLoader(false), 8000);
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+      onClose();
+    }, 10000);
     return () => clearTimeout(timer);
   }, [isOpen]);
 
@@ -52,7 +55,7 @@ export default function WaiterWaitingState({
 
         unmuteTimeout = setTimeout(() => {
           ws.setMuted(false);
-        }, 500);
+        }, 100);
       });
 
       ws.on("error", (e) => console.error("Errore Wavesurfer:", e));
@@ -60,7 +63,7 @@ export default function WaiterWaitingState({
       ws.on("finish", () => {
         ws.destroy();
         clearTimeout(unmuteTimeout);
-        onClose();
+        // onClose();
       });
     }
   }, [isOpen, showLoader, onClose]);
@@ -68,7 +71,7 @@ export default function WaiterWaitingState({
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
-        <div className="flex flex-wrap justify-center gap-8 cook-card-container w-full">
+        <div className="flex flex-col flex-wrap items-center justify-center gap-8 cook-card-container w-full">
           <div className="cook-avatar">
             <Image
               src="/avatars/waiterAi.png"
@@ -86,26 +89,27 @@ export default function WaiterWaitingState({
               I’ll get in touch with the chef you chose...
             </p>
 
-            {showLoader ? (
+            <div className="loadership_GRTSL">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <div ref={waveRef} className="hidden" />
+
+            {/* {showLoader ? (
               <div className="loadership_GRTSL">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
-              </div> /* : !audioStarted ? (
-            <button
-              className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700 transition"
-              onClick={() => setAudioStarted(true)}
-            >
-              Chiama cuoco
-            </button>
-          )*/
+              </div>
             ) : (
               <div
                 ref={waveRef}
                 className="w-[300px] h-[100px] gradient-background"
               />
-            )}
+            )} */}
           </div>
         </div>
       </Modal>
