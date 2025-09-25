@@ -4,27 +4,17 @@ import { useEffect, useState, useRef } from "react";
 import { Session, WaiterState } from "@/lib/switchWaiterState";
 import useInitSession from "@/hooks/useInitSession";
 import ChatHistory from "@/components/ChatHistory";
-import {
-  getInitialWaiterValue,
-  sendWaiterMessage,
-} from "@/lib/waiterApiClient";
-import {
-  getInitialCookValue,
-  initCookSession,
-  sendCookMessage,
-} from "@/lib/cookApiClient";
+import { getInitialWaiterValue, sendWaiterMessage, } from "@/lib/waiterApiClient";
+import { getInitialCookValue, initCookSession, sendCookMessage } from "@/lib/cookApiClient";
 import { CookSession } from "@/lib/switchCookState";
-import CookSelectionModal from "./CookSelectionModal";
+import Modal from "./Modal";
+import Image from "next/image";
 import InputChatBox from "@/components/InputChatBox";
 
 export default function ChatBox() {
-  // useState management -> WaiterSession, CookSession, recipe, cookChat, ChatHistory and isSending(user message sending)
   const [waiterSession, setWaiterSession] = useState<Session>(
     getInitialWaiterValue()
   );
-
-  const { sessionInit, error } = useInitSession(waiterSession, "api/waiter");
-
   const [cookSession, setCookSession] = useState<CookSession>(
     getInitialCookValue("", "")
   );
@@ -33,73 +23,15 @@ export default function ChatBox() {
 
   const [chatHistory, setChatHistory] = useState<ChatHistoryMessages[]>([]);
 
-  const [isSending, setIsSending] = useState(false); // user message state of sending to api, it should prevent spam from user
-
-  const sendMessage = async (input: string) => {
-    if (isSending) return;
-    setIsSending(true);
-
-    const userInput = { role: "user", content: input };
-    addHistoryMessage(userInput);
-
-    let returnedSession = null;
-
-    try {
-      if (!cookChat) {
-        returnedSession = await sendWaiterMessage(
-          input,
-          waiterSession,
-          setWaiterSession
-        );
-
-        if (returnedSession != null) {
-          /* addHistoryMessage(
-          returnedSession.history[returnedSession.history.length - 1]
-        ); */
-          setChatHistory(returnedSession.history);
-        }
-      } else if (cookChat && cookSession.cookID.trim() !== "") {
-        returnedSession = await sendCookMessage(
-          input,
-          cookSession,
-          setCookSession
-        );
-
-        if (returnedSession != null) {
-          addHistoryMessage({
-            ...returnedSession.history[returnedSession.history.length - 1],
-            id: cookSession.cookID,
-          });
-        }
-      }
-    } finally {
-      setIsSending(false);
-    }
-  };
-
   // Modal variables
   const [isCookModalOpen, setIsCookModalOpen] = useState(false);
   const [failText, setFailText] = useState("");
 
+  const { sessionInit, error } = useInitSession(waiterSession, "api/waiter");
+
   // Single scroll ref for the actual scrollable container
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  // Auto-scroll to bottom when chat history changes
-  useEffect(() => {
-    const scrollContainer = scrollRef.current;
-
-    if (scrollContainer) {
-      setTimeout(() => {
-        scrollContainer.scrollTo({
-          top: scrollContainer.scrollHeight,
-
-          behavior: "smooth",
-        });
-      }, 100);
-    }
-  }, [chatHistory]);
-
-  // useEffect management
   useEffect(() => {
     if (sessionInit && !error) {
       setWaiterSession(sessionInit);
@@ -111,48 +43,78 @@ export default function ChatBox() {
     setChatHistory((prev) => [...prev, message]);
   };
 
-  // TODO: Recipe doesn't show nothing on frontend
+  // Auto-scroll to bottom when chat history changes
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+    if (scrollContainer) {
+      setTimeout(() => {
+        scrollContainer.scrollTo({
+          top: scrollContainer.scrollHeight,
+          behavior: "smooth"
+        });
+      }, 100);
+    }
+  }, [chatHistory]);
+
+  const sendMessage = async (input: string) => {
+    const userInput = { role: "user", content: input };
+    addHistoryMessage(userInput);
+
+    let returnedSession = null;
+
+    if (!cookChat) {
+      returnedSession = await sendWaiterMessage(
+        input,
+        waiterSession,
+        setWaiterSession
+      );
+
+      if (returnedSession != null) {
+        setChatHistory(returnedSession.history);
+      }
+    } else if (cookChat && cookSession.cookID.trim() !== "") {
+      returnedSession = await sendCookMessage(
+        input,
+        cookSession,
+        setCookSession
+      );
+
+      if (returnedSession != null) {
+        addHistoryMessage({
+          ...returnedSession.history[returnedSession.history.length - 1],
+          id: cookSession.cookID,
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     if (waiterSession?.recipe) {
       setRecipe(waiterSession.recipe);
     }
   }, [waiterSession]);
 
-  // Return to waiter from cookChat finished
   useEffect(() => {
-    if (cookSession.step === "RETURN_TO_WAITER") {
+    if (cookSession.step === 'RETURN_TO_WAITER') {
       setCookChat(false);
       setCookSession(getInitialCookValue("", ""));
 
       (async () => {
         waiterSession.step = "RETURN_TO_WAITER" as WaiterState;
         let returnedSession = null;
-        returnedSession = await sendWaiterMessage(
-          " ",
-          waiterSession,
-          setWaiterSession
-        );
+        returnedSession = await sendWaiterMessage(" ", waiterSession, setWaiterSession);
         if (returnedSession != null) {
-          addHistoryMessage(
-            returnedSession.history[returnedSession.history.length - 1]
-          );
+          addHistoryMessage(returnedSession.history[returnedSession.history.length - 1]);
         }
       })();
     }
-  }, [cookSession.step, waiterSession]);
+  }, [cookSession.step]);
 
   const startCookCommunication = async (cookID: string) => {
-    const returnedSession = await initCookSession(
-      cookID,
-      recipe,
-      setCookSession
-    );
+    const returnedSession = await initCookSession(cookID, recipe, setCookSession);
 
     setWaiterSession((prev) => ({ ...prev, proposedCooks: undefined }));
-    setWaiterSession((prev) => ({
-      ...prev,
-      usedCooksID: [...(prev.usedCooksID ?? []), { id: cookID }],
-    }));
+    setWaiterSession((prev) => ({ ...prev, usedCooksID: [...(prev.usedCooksID ?? []), { id: cookID }], }));
 
     if (returnedSession && returnedSession.history.length > 0) {
       const lastMessage =
@@ -165,7 +127,6 @@ export default function ChatBox() {
     return cookID;
   };
 
-  // If proposedCook exist open Modal
   useEffect(() => {
     if (
       waiterSession?.proposedCooks &&
@@ -182,43 +143,78 @@ export default function ChatBox() {
   return (
     <div className="chat-container relative w-full max-w-5xl flex flex-col h-full p-6">
       <div className="flex-1 min-h-0 flex flex-col">
-        <div ref={scrollRef} className="chat-scroll hide-scrollbar">
-          <ChatHistory history={chatHistory ? chatHistory : []} />
+        <div 
+          ref={scrollRef}
+          className="chat-scroll hide-scrollbar"
+        >
+          <ChatHistory history={chatHistory ?? []} />
         </div>
-
         <div className="sticky bottom-0 pt-3 bg-transparent">
-          <InputChatBox
-            sendMessage={sendMessage}
-            disabled={
-              isSending ||
-              isCookModalOpen ||
-              (waiterSession?.proposedCooks?.length ?? 0) > 0
-            }
-          />
+          <InputChatBox sendMessage={sendMessage} />
         </div>
       </div>
 
-      {isSending && (
-        <div className="flex items-center gap-2 text-gray-500 italic p-2">
-          <span>
-            {cookChat
-              ? "👨‍🍳 The cook is thinking..."
-              : "🤵 The waiter is thinking..."}
-          </span>
-        </div>
-      )}
-
-      {isCookModalOpen && waiterSession?.proposedCooks && (
-        <CookSelectionModal
+      {isCookModalOpen && (
+        <Modal
           isOpen={isCookModalOpen}
-          cooks={waiterSession.proposedCooks}
-          failText={failText}
-          onFail={() => setFailText("You need to select a cook to proceed!!!")}
-          onSelect={async (id) => {
-            await startCookCommunication(id);
+          onClose={() => {
             setIsCookModalOpen(false);
           }}
-        />
+          onFail={() => {
+            setFailText("You need to select a cook to proceed!!!");
+          }}
+        >
+          <div className="modal-box flex flex-col items-center text-center p-8">
+            <h2 className="text-3xl font-bold mb-4 gradient-text">
+              These are the chefs available at the moment...
+            </h2>
+            <p className="text-red-600 font-semibold mb-8 text-lg">
+              Which chef would you like to get in touch with?
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-8 cook-card-container w-full">
+              {waiterSession?.proposedCooks &&
+                waiterSession.proposedCooks.map((cook, i) => (
+                  <div
+                    key={i}
+                    className="cook-card"
+                    onClick={async () => {
+                      const id = await startCookCommunication(cook.id);
+                      console.log("Hai selezionato:", id);
+                      setIsCookModalOpen(false);
+                    }}
+                  >
+                    <div className="cook-avatar mb-4">
+                      <Image
+                        src={cook.avatar}
+                        alt={cook.name}
+                        width={120}
+                        height={120}
+                        className="rounded-full object-cover"
+                      />
+                    </div>
+                    <p className="cook-name mb-3">
+                      {cook.name}
+                    </p>
+                    <div className="cook-details">
+                      <div className="cook-detail-item">
+                        <span className="cook-detail-label">Origin:</span> {cook.origin}
+                      </div>
+                      <div className="cook-detail-item">
+                        <span className="cook-detail-label">Cuisine:</span> {cook.cousine}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            
+            {failText !== "" && (
+              <div className="fail-message mt-6">
+                🤌 {failText} 🤌
+              </div>
+            )}
+          </div>
+        </Modal>
       )}
     </div>
   );
