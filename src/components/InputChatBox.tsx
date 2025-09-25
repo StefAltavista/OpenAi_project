@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { FaTelegramPlane } from "react-icons/fa";
 
 type InputChatBoxProps = {
-  sendMessage: (input: string) => void;
-  disabled?: boolean;
+  sendMessage: (input: string) => void,
+  disabled?: boolean,
 };
 
 export default function InputChatBox({
