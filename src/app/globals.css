@@ -41,18 +41,10 @@
   background: var(--primary-red);
 }
 
-/* Make sure the container allows children to shrink */
-.chat-container {
-  /* keep your existing styles … */
-  min-height: 0; /* <-- important in flex stacks */
-}
-
-/* Custom CSS Variables - Updated to match mockup */
 :root {
   --primary-red: #ff6b6b;
   --primary-red-light: #ffa8a8;
   --primary-red-dark: #ff5252;
-  /*--secondary-blue: #4dabf7;*/
   --secondary-blue: #dde8ff;
   --secondary-green: #51cf66;
   --accent-violet: #9775fa;
@@ -64,7 +56,6 @@
   --gradient-bg: linear-gradient(0deg, #ffffff, #fef2f2);
 }
 
-/* Global Styles */
 * {
   margin: 0;
   padding: 0;
@@ -148,6 +139,7 @@ body::after {
 
 /* Main Chat Container */
 .chat-container {
+  min-height: 0; 
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border: 2px solid rgba(255, 107, 107, 0.2);
@@ -155,14 +147,14 @@ body::after {
   box-shadow: var(--shadow-soft);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   max-width: 1200px;
   height: 80dvh;
   display: flex;
   flex-direction: column;
   margin: 0 auto;
   width: 85%;
-  padding-top: 24px;
+  padding: 24px 18px!important;
 }
 
 .chat-container:hover {
@@ -208,7 +200,6 @@ body::after {
   animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   max-width: 60%;
   word-wrap: break-word;
-  margin-top: 20px !important;
 }
 
 .message-waiter {
@@ -241,7 +232,7 @@ body::after {
   position: relative;
   transition: transform 0.3s ease;
   flex-shrink: 0;
-  margin-left: 20px;
+  margin-left: 0px;
 }
 
 .avatar-container:hover {
@@ -251,21 +242,34 @@ body::after {
 .avatar-container::after {
   content: "";
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: linear-gradient(45deg, var(--primary-red), var(--accent-violet));
   border-radius: 50%;
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
+  transform: scale(0.95); 
 }
 
 .avatar-container:hover::after {
   opacity: 1;
 }
 
+.user-avatar {
+  width: 45px;
+  height:45px;
+}
+.waiter-avatar {
+  width: 70px;
+  height: 70px;
+}
+.cook-avatar {
+  width: 70px;
+  height: 70px;
+}
 /* Input Box Styling - Updated width to 80% */
 .input-container {
   background: white;
@@ -331,10 +335,8 @@ body::after {
   transform: scale(0.98);
 }
 
-/* Modal Styling */
 .modal-box {
-  padding-top: 30px;
-  padding-bottom: 10px;
+  padding: 30px!important;
 }
 .modal-overlay {
   backdrop-filter: blur(8px);
@@ -375,7 +377,6 @@ body::after {
   height: 4px;
 }
 
-/* Cook Selection Cards - Fixed centering and visibility */
 .cook-card {
   background: white;
   border-radius: 20px;
@@ -397,7 +398,7 @@ body::after {
   margin-bottom: 20px;
 }
 .cook-card:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-8px) scale(1.05);
   border-color: var(--primary-red-light);
   box-shadow: 0 20px 40px rgba(255, 107, 107, 0.15);
 }
@@ -412,9 +413,9 @@ body::after {
   overflow: hidden;
 }
 
-.cook-card:hover .cook-avatar {
-  border-color: var(--primary-red);
-  transform: scale(1.1);
+.cook-card-avatar{
+  width: 150px!important;
+  height: 150px!important;
 }
 
 .cook-name {
@@ -425,7 +426,6 @@ body::after {
   font-weight: 600;
   transition: all 0.3s ease;
   border: 2px solid transparent;
-  margin-bottom: 16px;
 }
 
 .cook-card:hover .cook-name {
@@ -435,7 +435,6 @@ body::after {
   transform: scale(1.05);
 }
 
-/* Cook Details - Fixed visibility */
 .cook-details {
   opacity: 0;
   transform: translateY(10px);
@@ -459,7 +458,6 @@ body::after {
   color: var(--text-primary);
 }
 
-/* Error/Fail Message */
 .fail-message {
   background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
   border: 2px solid var(--primary-red-light);
@@ -519,39 +517,69 @@ body::after {
   }
 }
 
-/* Loading States */
 .loading {
   animation: pulse 1.5s ease-in-out infinite;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .chat-container {
     border-radius: 16px;
     margin: 10px;
   }
-
   .modal-content {
     border-radius: 16px;
     margin: 20px;
   }
-
   .cook-card {
     margin-bottom: 16px;
     min-width: 160px;
   }
-
   .cook-avatar {
     width: 100px;
     height: 100px;
   }
-
+  .cook-name {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+  }
   .input-container {
     width: 95%;
   }
+  .user-avatar {
+    width: 35px;
+    height:35px;
+    margin-top: 5px;
+  }
+  .waiter-avatar {
+    width: 58px;
+    height: 58px;
+  }
+  .cook-avatar {
+    width: 58px;
+    height: 58px;
+  }
+  p {
+    line-height: 1.4!important;
+  }
+  .message-waiter{
+    max-width: 70%!important;
+  }
+  .message-cook{
+    max-width: 70%!important;
+  }
+  .modal-box {
+    padding: 16px!important;
+    max-height: 75vh;
+  }
+  .cook-card {
+    padding: 12px;
+  }
+  .cook-card-avatar{
+    width: 110px!important;
+    height: 110px!important;
+  }
 }
 
-/* Utility Classes */
 .gradient-text {
   background: linear-gradient(135deg, var(--primary-red), var(--accent-violet));
   -webkit-background-clip: text;
@@ -571,13 +599,11 @@ body::after {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Focus Styles for Accessibility */
 .focusable:focus {
   outline: 2px solid var(--primary-red);
   outline-offset: 2px;
 }
 
-/* Typography Improvements */
 h1,
 h2,
 h3 {
@@ -587,7 +613,7 @@ h3 {
 
 p {
   font-weight: 400;
-  line-height: 1.7;
+  line-height: 1.6;
 }
 
 /* Button Base Styles */

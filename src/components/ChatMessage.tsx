@@ -15,15 +15,16 @@ export default function ChatMessage({ content, role, id }: ChatMessageProps) {
   let avatarSrc = "";
   let altText = "";
   let messageClasses = "";
-  let alignClass = "";
+  let avatarClasses = "";
+  //let alignClass = "";
 
   // Branch user
   if (role === "user") {
     avatarSrc = "/avatars/user.png";
     altText = "user";
     messageClasses = "message-user";
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    alignClass = "flex-row-reverse";
+    avatarClasses = "user-avatar";
+    //alignClass = "flex-row-reverse";
     // Branch Cook
   } else if (role === "cook" && id) {
     const selectedCook = cooks.find((cook) => cook.id === id);
@@ -31,30 +32,32 @@ export default function ChatMessage({ content, role, id }: ChatMessageProps) {
     avatarSrc = selectedCook.avatar;
     altText = selectedCook.name;
     messageClasses = "message-cook";
+    avatarClasses = "cook-avatar";
   } else {
     // Branch waiter
     avatarSrc = "/avatars/waiterAi.png";
     altText = "waiter";
     messageClasses = "message-waiter";
+    avatarClasses = "waiter-avatar";
   }
 
   const rowAlign =
     role === "user" ? "flex-row-reverse items-start" : "items-start";
 
   return (
-    <div className={`flex gap-3 ${rowAlign}`}>
+    <div className={`flex !gap-1 md:!gap-3 ${rowAlign}`}>
       <div className="shrink-0 avatar-container">
         <Image
           src={avatarSrc}
           alt={altText}
           width={80}
           height={80}
-          className="rounded-full object-cover align-middle"
+          className={`${avatarClasses} rounded-full object-cover align-top"`}
         />
       </div>
 
       <div className={`${messageClasses} max-w-[70%] self-start`}>
-        <p className="font-medium leading-relaxed whitespace-pre-wrap">
+         <p className="text-sm md:text-base lg:text-lg font-medium leading-none whitespace-pre-wrap" >
           {content}
         </p>
       </div>
