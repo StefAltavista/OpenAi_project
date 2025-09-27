@@ -8,7 +8,7 @@ export default function Footer() {
         <a href="#" className="footer-link">
           Terms of Service
         </a>
-        <span className="footer-link">© 2024 SummerCamp Bistrò</span>
+        <span className="footer-link">© 2025 SummerCamp Bistrò</span>
         <a href="#" className="footer-link">
           Contact Us
         </a>
