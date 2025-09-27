@@ -554,6 +554,35 @@ body::after {
     width: 110px!important;
     height: 110px!important;
   }
+
+  .input-field {
+    font-size: 14px;
+    color: var(--text-primary);
+    padding: 0px 10px;
+    flex: 1;
+    transition: all 0.3s ease;
+  }
+
+  .input-field::placeholder {
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .input-container {
+    background: white;
+    border: 2px solid var(--primary-red);
+    border-radius: 24px;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    width: 98%;
+    margin: 20px auto 0;
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    height: 70px;
+  }
 }
 
 .gradient-text {
