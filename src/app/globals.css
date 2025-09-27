@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 .hide-scrollbar {
-  overflow: auto; 
+  overflow: auto;
   -ms-overflow-style: none; /* IE and old Edge */
   scrollbar-width: none; /* Firefox */
 }
@@ -135,7 +135,8 @@ body::after {
 }
 
 .chat-container {
-  min-height: 0; 
+  min-height: 0;
+  min-height: 0;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border: 2px solid rgba(255, 107, 107, 0.2);
@@ -144,13 +145,15 @@ body::after {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: visible;
+  overflow: visible;
   max-width: 1200px;
   height: 80dvh;
   display: flex;
   flex-direction: column;
   margin: 0 auto;
   width: 85%;
-  padding: 24px 18px!important;
+  padding: 24px 18px !important;
+  padding: 24px 18px !important;
 }
 
 .chat-container:hover {
@@ -225,6 +228,7 @@ body::after {
   transition: transform 0.3s ease;
   flex-shrink: 0;
   margin-left: 0px;
+  margin-left: 0px;
 }
 
 .avatar-container:hover {
@@ -238,12 +242,17 @@ body::after {
   left: 0;
   right: 0;
   bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: linear-gradient(45deg, var(--primary-red), var(--accent-violet));
   border-radius: 50%;
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
-  transform: scale(0.95); 
+  transform: scale(0.95);
+  transform: scale(0.95);
 }
 
 .avatar-container:hover::after {
@@ -252,7 +261,7 @@ body::after {
 
 .user-avatar {
   width: 45px;
-  height:45px;
+  height: 45px;
 }
 .waiter-avatar {
   width: 70px;
@@ -262,7 +271,7 @@ body::after {
   width: 70px;
   height: 70px;
 }
-
+/* Input Box Styling - Updated width to 80% */
 .input-container {
   background: white;
   border: 2px solid var(--primary-red);
@@ -328,7 +337,8 @@ body::after {
 }
 
 .modal-box {
-  padding: 30px!important;
+  padding: 30px !important;
+  padding: 30px !important;
 }
 .modal-overlay {
   backdrop-filter: blur(8px);
@@ -390,13 +400,24 @@ body::after {
 }
 .cook-card:hover {
   transform: translateY(-8px) scale(1.05);
+  transform: translateY(-8px) scale(1.05);
   border-color: var(--primary-red-light);
   box-shadow: 0 20px 40px rgba(255, 107, 107, 0.15);
 }
 
-.cook-card-avatar{
-  width: 150px!important;
-  height: 150px!important;
+.cook-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid var(--primary-red-light);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cook-card-avatar {
+  width: 150px !important;
+  height: 150px !important;
 }
 
 .cook-name {
@@ -514,6 +535,10 @@ body::after {
   .cook-card {
     margin-bottom: 16px;
   }
+  .cook-avatar {
+    width: 100px;
+    height: 100px;
+  }
   .cook-name {
     margin-bottom: 10px;
     font-size: 0.9rem;
@@ -523,7 +548,7 @@ body::after {
   }
   .user-avatar {
     width: 35px;
-    height:35px;
+    height: 35px;
     margin-top: 5px;
   }
   .waiter-avatar {
@@ -535,25 +560,59 @@ body::after {
     height: 58px;
   }
   p {
-    line-height: 1.4!important;
+    line-height: 1.4 !important;
   }
-  .message-waiter{
-    max-width: 70%!important;
+  .message-waiter {
+    max-width: 70% !important;
   }
-  .message-cook{
-    max-width: 70%!important;
+  .message-cook {
+    max-width: 70% !important;
   }
   .modal-box {
-    padding: 16px!important;
+    padding: 16px !important;
     max-height: 75vh;
   }
   .cook-card {
     padding: 12px;
   }
-  .cook-card-avatar{
-    width: 110px!important;
-    height: 110px!important;
+  .cook-card-avatar {
+    width: 110px !important;
+    height: 110px !important;
   }
+}
+
+.user-avatar {
+  width: 35px;
+  height: 35px;
+  margin-top: 5px;
+}
+.waiter-avatar {
+  width: 58px;
+  height: 58px;
+}
+.cook-avatar {
+  width: 58px;
+  height: 58px;
+}
+p {
+  line-height: 1.4 !important;
+}
+.message-waiter {
+  max-width: 70% !important;
+}
+.message-cook {
+  max-width: 70% !important;
+}
+.modal-box {
+  padding: 16px !important;
+  max-height: 75vh;
+}
+.cook-card {
+  padding: 12px;
+}
+.cook-card-avatar {
+  width: 110px !important;
+  height: 110px !important;
 }
 
 .gradient-text {
@@ -565,8 +624,8 @@ body::after {
 
 .gradient-background {
   background: linear-gradient(90deg, #f66c76, #d66fa3);
-  border-radius: 8px; 
-  overflow: hidden; 
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .glass-effect {
@@ -589,6 +648,7 @@ h3 {
 
 p {
   font-weight: 400;
+  line-height: 1.6;
   line-height: 1.6;
 }
 .btn-primary {
