@@ -29,11 +29,11 @@ export default function CookSelectionModal({
           Which chef would you like to get in touch with?
         </p>
 
-        <div className="flex flex-wrap justify-center gap-1 md:!gap-8 cook-card-container w-full">
+        <div className="flex flex-wrap justify-center gap-1 md:!gap-5 cook-card-container w-full">
           {cooks.map((cook, i) => (
             <div
               key={i}
-              className="cook-card"
+              className="cook-card w-[220px] sm:w-[240px] md:w-[260px] grow-0 shrink-0"
               onClick={() => onSelect(cook.id)}
             >
               <div className=" mb-4">
