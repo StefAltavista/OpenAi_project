@@ -163,14 +163,6 @@ export default function ChatBox() {
     return cookID;
   };
 
-  // If cookSession is at the end WaiterWaitingModal will open
-  useEffect(() => {
-    console.log(waiterSession.step);
-    if (waiterSession.step === "COOK_SELECTED") {
-      setIsWaiterModalOpen(true);
-    }
-  }, [waiterSession]);
-
   // If proposedCook exist open Modal
   useEffect(() => {
     if (
@@ -229,7 +221,9 @@ export default function ChatBox() {
           onSelect={async (id) => {
             setIsCookModalOpen(false);
             setIsWaiterModalOpen(true);
-            await startCookCommunication(id);
+            setTimeout(async () => {
+              await startCookCommunication(id);
+            }, 7000);
           }}
         />
       )}
