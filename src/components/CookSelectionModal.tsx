@@ -29,7 +29,7 @@ export default function CookSelectionModal({
           Which chef would you like to get in touch with?
         </p>
 
-        <div className="flex flex-wrap justify-center gap-1 md:!gap-8 cook-card-container w-full">
+        <div className="flex flex-wrap justify-center gap-1 md:!gap-5 cook-card-container w-full">
           {cooks.map((cook, i) => (
             <div
               key={i}
