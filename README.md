@@ -1,6 +1,6 @@
 # 🍝 Recipe Chatbot - OpenAi_project
 
-A web application built with **Next.js**, developed in **TypeScript** and styled with **TailwindCSS**, integrating the **OpenAI API** to deliver a culinary-themed chatbot.
+A responsive web application built with **Next.js**, developed in **TypeScript** and styled with **TailwindCSS**, integrating the **OpenAI API** to deliver a culinary-themed chatbot.
 
 Upon entering the platform, the user is greeted by a **virtual waiter** who asks a few playful questions and then proposes **3 randomly selected chefs** from the available list. The user can pick their favorite through a modal window, continuing into a humorous and intentionally irritating conversation with the chatbot.
 
