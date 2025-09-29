@@ -2,11 +2,21 @@
 
 A responsive web application built with **Next.js**, developed in **TypeScript** and styled with **TailwindCSS**, integrating the **OpenAI API** to deliver a culinary-themed chatbot.
 
-Upon entering the platform, the user is greeted by a **virtual waiter** who asks a few playful questions and then proposes **3 randomly selected chefs** from the available list. The user can pick their favorite through a modal window, continuing into a humorous and intentionally irritating conversation with the chatbot.
+Upon entering the web application, the user interacts with a **virtual waiter** to request a specific recipe.
+
+Then, the AI Waiter Agent proposes **3 randomly selected chefs** from the available list. 
+
+Once the user selects a chef, a chat starts with that chef, after an intentionally long and frustrating wait time.
+
+Each private chat with a chef is limited to 5 interactions (questions and answers).
+
+However, the chefs always give confusing and humorous answers, aiming to prolong the conversation without ever actually providing the requested recipe.
+
+After the chat ends, the AI Waiter Agent suggests another chef from the available list for the user to talk to, repeating the same cycle.
 
 ## 🎯 Project Goal
 
-The application is deliberately ironic and unhelpful.
+This web application is designed to balance frustration with usability, creating a funny paradox that keeps users engaged.
 
 Agents’ prompts are designed to produce funny, unpredictable, and confusing responses.
 
