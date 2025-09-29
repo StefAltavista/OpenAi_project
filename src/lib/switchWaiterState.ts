@@ -57,7 +57,7 @@ export async function switchWaiterState(session: Session) {
       const cooks_proposition = getRandomCooks(session.usedCooksID || []);
       session.history.push({
         role: "system",
-        content: `Give a wierd feedback about the choice the user made, say to wait and handoff to the cook to give the recipe`,
+        content: `Give a wierd feedback about the choice the user made, and make joke of him/her, then say to wait and handoff to the cook to give the recipe`,
       });
       session.step = "COOK_SELECTED";
       session.proposedCooks = cooks_proposition;
